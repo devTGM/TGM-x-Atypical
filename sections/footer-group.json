@@ -78,8 +78,8 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
-                "width": "fit-content",
+                "text": "<p>Atypical Clothing is a premium Indian streetwear brand offering oversized t-shirts, hoodies, co-ord sets, and everyday essentials designed for modern creators and trendsetters. Crafted with premium fabrics, unique designs, and superior comfort, Atypical delivers high-quality fashion for those who choose to stand out instead of blending in.</p>",
+                "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
@@ -244,15 +244,6 @@
     "footer_utilities_jLGE8U": {
       "type": "footer-utilities",
       "blocks": {
-        "footer_copyright_jweRK8": {
-          "type": "footer-copyright",
-          "settings": {
-            "show_powered_by": false,
-            "font_size": "0.75rem",
-            "case": "none"
-          },
-          "blocks": {}
-        },
         "footer_policy_list_VCdnpa": {
           "type": "footer-policy-list",
           "settings": {
@@ -279,12 +270,21 @@
             "custom_url": ""
           },
           "blocks": {}
+        },
+        "footer_copyright_jweRK8": {
+          "type": "footer-copyright",
+          "settings": {
+            "show_powered_by": false,
+            "font_size": "0.75rem",
+            "case": "none"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "footer_copyright_jweRK8",
         "footer_policy_list_VCdnpa",
-        "social_links_Ew63Kq"
+        "social_links_Ew63Kq",
+        "footer_copyright_jweRK8"
       ],
       "name": "t:names.utilities",
       "settings": {
@@ -298,6 +298,7 @@
     },
     "logo_eEYtnj": {
       "type": "logo",
+      "disabled": true,
       "name": "t:names.logo",
       "settings": {
         "inverse": false,
