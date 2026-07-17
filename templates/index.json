@@ -732,6 +732,65 @@
         "padding-block-end": 48
       }
     },
+    "media_with_content_YKyK7x": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify://shop_images/42B61F7A-7E27-49DD-8818-796F8AD6676D.jpg",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "cover",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-end",
+            "gap": 24
+          },
+          "blocks": {
+            "jumbo_text_bYJn38": {
+              "type": "jumbo-text",
+              "name": "t:names.jumbo_text",
+              "settings": {
+                "text": "BEST\nIN THE\nGAME",
+                "font": "heading",
+                "alignment": "right",
+                "line_height": "0.8",
+                "letter_spacing": "-0.03em",
+                "case": "uppercase",
+                "text_effect": "blur",
+                "animation_repeat": true
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "jumbo_text_bYJn38"
+          ]
+        }
+      },
+      "name": "t:names.editorial_jumbo_text",
+      "settings": {
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "60svh",
+        "section_width": "full-width",
+        "extend_media": true,
+        "color_scheme": "scheme-3",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "section_99Dqzf": {
       "type": "section",
       "blocks": {
@@ -1458,65 +1517,6 @@
         "padding-block-end": 48
       }
     },
-    "media_with_content_YKyK7x": {
-      "type": "media-with-content",
-      "blocks": {
-        "media": {
-          "type": "_media-without-appearance",
-          "static": true,
-          "settings": {
-            "media_type": "image",
-            "image": "shopify://shop_images/42B61F7A-7E27-49DD-8818-796F8AD6676D.jpg",
-            "link": "",
-            "video_loop": true,
-            "video_autoplay": false,
-            "image_position": "cover",
-            "video_position": "cover"
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "_content-without-appearance",
-          "static": true,
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "flex-end",
-            "gap": 24
-          },
-          "blocks": {
-            "jumbo_text_bYJn38": {
-              "type": "jumbo-text",
-              "name": "t:names.jumbo_text",
-              "settings": {
-                "text": "BEST\nIN THE\nGAME",
-                "font": "heading",
-                "alignment": "right",
-                "line_height": "0.8",
-                "letter_spacing": "-0.03em",
-                "case": "uppercase",
-                "text_effect": "blur",
-                "animation_repeat": true
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "jumbo_text_bYJn38"
-          ]
-        }
-      },
-      "name": "t:names.editorial_jumbo_text",
-      "settings": {
-        "media_position": "right",
-        "media_width": "medium",
-        "media_height": "60svh",
-        "section_width": "full-width",
-        "extend_media": true,
-        "color_scheme": "scheme-3",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
     "section_7EfWPQ": {
       "type": "section",
       "blocks": {
@@ -1586,11 +1586,11 @@
     "custom_liquid_gfhkEA",
     "product_list_VwBgii",
     "product_list_ecyYyr",
+    "media_with_content_YKyK7x",
     "section_99Dqzf",
     "product_list_rMp3Ji",
     "marquee_JJLdMx",
     "product_list_Yp6nUa",
-    "media_with_content_YKyK7x",
     "section_7EfWPQ"
   ]
 }
