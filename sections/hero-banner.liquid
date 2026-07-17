@@ -1,12 +1,40 @@
 {% liquid
-  assign slide_count = 0
-  assign slide_blocks = ''
+  comment
+    Hero Banner Slideshow
+    - Up to 10 image/video slides via section settings
+    - Separate desktop & mobile images per slide
+    - Auto-rotation using existing slideshow web components
+    - Transparent header compatible
+  endcomment
 
-  for block in section.blocks
-    if block.type == 'slide'
+  assign slide_count = 0
+  assign slide_indices = ''
+
+  for i in (1..10)
+    assign media_type_key = 'media_type_' | append: i
+    assign desktop_image_key = 'desktop_image_' | append: i
+    assign desktop_video_key = 'desktop_video_' | append: i
+    assign media_type = section.settings[media_type_key]
+    assign desktop_image = section.settings[desktop_image_key]
+    assign desktop_video = section.settings[desktop_video_key]
+
+    assign has_media = false
+    if media_type == 'image' and desktop_image != blank
+      assign has_media = true
+    elsif media_type == 'video' and desktop_video != blank
+      assign has_media = true
+    endif
+
+    if has_media
       assign slide_count = slide_count | plus: 1
+      if slide_indices != ''
+        assign slide_indices = slide_indices | append: ','
+      endif
+      assign slide_indices = slide_indices | append: i
     endif
   endfor
+
+  assign slide_indices_array = slide_indices | split: ','
 
   assign autoplay = false
   if section.settings.autoplay and slide_count > 1
@@ -26,124 +54,125 @@
   assign desktop_widths = '832, 1200, 1600, 1920, 2560, 3840'
   assign mobile_widths = '416, 600, 800, 1200, 1600'
   assign mobile_widths_array = mobile_widths | split: ', '
-  assign desktop_sizes = '100vw'
-  assign mobile_sizes = '100vw'
 %}
 
-{%- comment -%} Build slides {%- endcomment -%}
+{%- comment -%} Build slides from section settings {%- endcomment -%}
 {% capture slides_html %}
   {%- assign slide_index = 0 -%}
-  {%- for block in section.blocks -%}
-    {%- if block.type == 'slide' -%}
-      {% capture slide_content %}
-        <div class="hero-banner__slide-media" {{ block.shopify_attributes }}>
-          {%- if block.settings.media_type == 'image' -%}
-            {%- if block.settings.desktop_image != blank -%}
-              {%- if block.settings.mobile_image != blank -%}
-                {%- comment -%} Art direction: separate desktop & mobile images via <picture> {%- endcomment -%}
-                <picture class="hero-banner__media" data-testid="hero-banner-picture-{{ slide_index }}">
-                  <source
-                    media="(max-width: 749px)"
-                    srcset="
-                      {%- for mobile_width in mobile_widths_array -%}
-                        {{ block.settings.mobile_image | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
-                      {%- endfor -%}
-                    "
-                    sizes="{{ mobile_sizes }}"
-                    width="{{ block.settings.mobile_image.width }}"
-                    height="{{ block.settings.mobile_image.height }}"
-                  >
-                  {{
-                    block.settings.desktop_image
-                    | image_url: width: 3840
-                    | image_tag:
-                      width: block.settings.desktop_image.width,
-                      widths: desktop_widths,
-                      height: block.settings.desktop_image.height,
-                      alt: block.settings.desktop_image.alt,
-                      class: 'hero-banner__media',
-                      sizes: desktop_sizes,
-                      fetchpriority: fetch_priority,
-                      data-testid: 'hero-banner-desktop-image'
-                  }}
-                </picture>
-              {%- else -%}
-                {%- comment -%} No mobile image: serve desktop image with mobile-optimised srcset {%- endcomment -%}
+  {%- for idx_str in slide_indices_array -%}
+    {%- assign i = idx_str | plus: 0 -%}
+    {%- assign media_type_key = 'media_type_' | append: i -%}
+    {%- assign desktop_image_key = 'desktop_image_' | append: i -%}
+    {%- assign mobile_image_key = 'mobile_image_' | append: i -%}
+    {%- assign desktop_video_key = 'desktop_video_' | append: i -%}
+    {%- assign mobile_video_key = 'mobile_video_' | append: i -%}
+
+    {%- assign media_type = section.settings[media_type_key] -%}
+    {%- assign desktop_image = section.settings[desktop_image_key] -%}
+    {%- assign mobile_image = section.settings[mobile_image_key] -%}
+    {%- assign desktop_video = section.settings[desktop_video_key] -%}
+    {%- assign mobile_video = section.settings[mobile_video_key] -%}
+
+    {% capture slide_content %}
+      <div class="hero-banner__slide-media">
+        {%- if media_type == 'image' -%}
+          {%- if desktop_image != blank -%}
+            {%- if mobile_image != blank -%}
+              {%- comment -%} Art direction: separate desktop & mobile images via <picture> {%- endcomment -%}
+              <picture class="hero-banner__media" data-testid="hero-banner-picture-{{ i }}">
+                <source
+                  media="(max-width: 749px)"
+                  srcset="
+                    {%- for mobile_width in mobile_widths_array -%}
+                      {{ mobile_image | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
+                    {%- endfor -%}
+                  "
+                  sizes="100vw"
+                  width="{{ mobile_image.width }}"
+                  height="{{ mobile_image.height }}"
+                >
                 {{
-                  block.settings.desktop_image
+                  desktop_image
                   | image_url: width: 3840
                   | image_tag:
-                    width: block.settings.desktop_image.width,
-                    widths: '416, 600, 800, 1200, 1600, 1920, 2560, 3840',
-                    height: block.settings.desktop_image.height,
-                    alt: block.settings.desktop_image.alt,
+                    width: desktop_image.width,
+                    widths: desktop_widths,
+                    height: desktop_image.height,
+                    alt: desktop_image.alt,
                     class: 'hero-banner__media',
                     sizes: '100vw',
                     fetchpriority: fetch_priority,
-                    data-testid: 'hero-banner-image'
+                    data-testid: 'hero-banner-desktop-image'
                 }}
-              {%- endif -%}
+              </picture>
             {%- else -%}
-              {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero-banner__media' }}
-            {%- endif -%}
-
-          {%- elsif block.settings.media_type == 'video' -%}
-            {%- comment -%} Desktop video {%- endcomment -%}
-            {%- if block.settings.desktop_video != blank -%}
-              <div class="hero-banner__media-wrapper hero-banner__media-wrapper--desktop{% unless block.settings.mobile_video != blank %} hero-banner__media-wrapper--mobile{% endunless %}">
-                {{
-                  block.settings.desktop_video
-                  | video_tag:
-                    poster: nil,
-                    autoplay: true,
-                    loop: true,
-                    controls: false,
-                    muted: true,
-                    class: 'hero-banner__media',
-                    data-testid: 'hero-banner-desktop-video'
-                }}
-              </div>
-            {%- endif -%}
-
-            {%- comment -%} Mobile video (only if separate from desktop) {%- endcomment -%}
-            {%- if block.settings.mobile_video != blank -%}
-              <div class="hero-banner__media-wrapper hero-banner__media-wrapper--mobile">
-                {{
-                  block.settings.mobile_video
-                  | video_tag:
-                    poster: nil,
-                    autoplay: true,
-                    loop: true,
-                    controls: false,
-                    muted: true,
-                    class: 'hero-banner__media',
-                    data-testid: 'hero-banner-mobile-video'
-                }}
-              </div>
-            {%- endif -%}
-
-            {%- if block.settings.desktop_video == blank -%}
-              {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero-banner__media' }}
+              {%- comment -%} No mobile image: serve desktop image with mobile-optimised srcset {%- endcomment -%}
+              {{
+                desktop_image
+                | image_url: width: 3840
+                | image_tag:
+                  width: desktop_image.width,
+                  widths: '416, 600, 800, 1200, 1600, 1920, 2560, 3840',
+                  height: desktop_image.height,
+                  alt: desktop_image.alt,
+                  class: 'hero-banner__media',
+                  sizes: '100vw',
+                  fetchpriority: fetch_priority,
+                  data-testid: 'hero-banner-image'
+              }}
             {%- endif -%}
           {%- endif -%}
-        </div>
-      {% endcapture %}
 
-      {% render 'slideshow-slide',
-        index: slide_index,
-        children: slide_content,
-        slide_id: block.id,
-        class: 'hero-banner__slide',
-        media_fit: 'cover'
-      %}
+        {%- elsif media_type == 'video' -%}
+          {%- if desktop_video != blank -%}
+            <div class="hero-banner__media-wrapper hero-banner__media-wrapper--desktop{% unless mobile_video != blank %} hero-banner__media-wrapper--mobile{% endunless %}">
+              {{
+                desktop_video
+                | video_tag:
+                  poster: nil,
+                  autoplay: true,
+                  loop: true,
+                  controls: false,
+                  muted: true,
+                  class: 'hero-banner__media',
+                  data-testid: 'hero-banner-desktop-video'
+              }}
+            </div>
+          {%- endif -%}
 
-      {%- comment -%} Only first slide gets high priority {%- endcomment -%}
-      {%- if slide_index == 0 -%}
-        {%- assign fetch_priority = 'auto' -%}
-      {%- endif -%}
+          {%- if mobile_video != blank -%}
+            <div class="hero-banner__media-wrapper hero-banner__media-wrapper--mobile">
+              {{
+                mobile_video
+                | video_tag:
+                  poster: nil,
+                  autoplay: true,
+                  loop: true,
+                  controls: false,
+                  muted: true,
+                  class: 'hero-banner__media',
+                  data-testid: 'hero-banner-mobile-video'
+              }}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    {% endcapture %}
 
-      {%- assign slide_index = slide_index | plus: 1 -%}
+    {% render 'slideshow-slide',
+      index: slide_index,
+      children: slide_content,
+      slide_id: section.id | append: '-slide-' | append: i,
+      class: 'hero-banner__slide',
+      media_fit: 'cover'
+    %}
+
+    {%- comment -%} Only first slide gets high priority {%- endcomment -%}
+    {%- if slide_index == 0 -%}
+      {%- assign fetch_priority = 'auto' -%}
     {%- endif -%}
+
+    {%- assign slide_index = slide_index | plus: 1 -%}
   {%- endfor -%}
 {% endcapture %}
 
@@ -211,7 +240,7 @@
       {% endif %}
     </div>
 
-    {%- comment -%} Content overlay {%- endcomment -%}
+    {%- comment -%} Content overlay (text, buttons, etc.) {%- endcomment -%}
     <div
       class="
         hero-banner__content-wrapper
@@ -392,7 +421,6 @@
     z-index: calc(var(--layer-flat) + 3);
   }
 
-  /* Ensure slideshow arrows are clickable */
   .hero-banner__slideshow-wrapper slideshow-arrows .slideshow-control {
     pointer-events: auto;
   }
@@ -408,65 +436,6 @@
   "tag": "section",
   "class": "hero-banner-wrapper section-wrapper",
   "blocks": [
-    {
-      "type": "slide",
-      "name": "Slide",
-      "limit": 10,
-      "settings": [
-        {
-          "type": "select",
-          "id": "media_type",
-          "label": "Media type",
-          "options": [
-            {
-              "value": "image",
-              "label": "Image"
-            },
-            {
-              "value": "video",
-              "label": "Video"
-            }
-          ],
-          "default": "image"
-        },
-        {
-          "type": "header",
-          "content": "Desktop media"
-        },
-        {
-          "type": "image_picker",
-          "id": "desktop_image",
-          "label": "Desktop image",
-          "visible_if": "{{ block.settings.media_type == 'image' }}"
-        },
-        {
-          "type": "video",
-          "id": "desktop_video",
-          "label": "Desktop video",
-          "visible_if": "{{ block.settings.media_type == 'video' }}"
-        },
-        {
-          "type": "header",
-          "content": "Mobile media (optional)"
-        },
-        {
-          "type": "paragraph",
-          "content": "If no mobile image is set, the desktop image will be automatically optimised for mobile."
-        },
-        {
-          "type": "image_picker",
-          "id": "mobile_image",
-          "label": "Mobile image",
-          "visible_if": "{{ block.settings.media_type == 'image' }}"
-        },
-        {
-          "type": "video",
-          "id": "mobile_video",
-          "label": "Mobile video",
-          "visible_if": "{{ block.settings.media_type == 'video' }}"
-        }
-      ]
-    },
     {
       "type": "@theme"
     },
@@ -498,7 +467,416 @@
   "settings": [
     {
       "type": "header",
-      "content": "Slideshow"
+      "content": "Slide 1"
+    },
+    {
+      "type": "select",
+      "id": "media_type_1",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_1",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_1 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_1",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_1 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_1",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_1",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "select",
+      "id": "media_type_2",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_2",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_2 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_2",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_2 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_2",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_2",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "select",
+      "id": "media_type_3",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_3",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_3 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_3",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_3 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_3",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_3 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_3",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_3 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 4"
+    },
+    {
+      "type": "select",
+      "id": "media_type_4",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_4",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_4 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_4",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_4 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_4",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_4 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_4",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_4 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 5"
+    },
+    {
+      "type": "select",
+      "id": "media_type_5",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_5",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_5 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_5",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_5 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_5",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_5 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_5",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_5 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 6"
+    },
+    {
+      "type": "select",
+      "id": "media_type_6",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_6",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_6 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_6",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_6 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_6",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_6 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_6",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_6 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 7"
+    },
+    {
+      "type": "select",
+      "id": "media_type_7",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_7",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_7 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_7",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_7 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_7",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_7 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_7",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_7 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 8"
+    },
+    {
+      "type": "select",
+      "id": "media_type_8",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_8",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_8 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_8",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_8 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_8",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_8 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_8",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_8 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 9"
+    },
+    {
+      "type": "select",
+      "id": "media_type_9",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_9",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_9 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_9",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_9 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_9",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_9 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_9",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_9 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slide 10"
+    },
+    {
+      "type": "select",
+      "id": "media_type_10",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image_10",
+      "label": "Desktop image",
+      "visible_if": "{{ section.settings.media_type_10 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_10",
+      "label": "Mobile image (optional)",
+      "info": "If empty, the desktop image is automatically optimised for mobile.",
+      "visible_if": "{{ section.settings.media_type_10 == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video_10",
+      "label": "Desktop video",
+      "visible_if": "{{ section.settings.media_type_10 == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video_10",
+      "label": "Mobile video (optional)",
+      "info": "If empty, the desktop video is used on mobile.",
+      "visible_if": "{{ section.settings.media_type_10 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Slideshow settings"
     },
     {
       "type": "checkbox",
@@ -526,18 +904,9 @@
       "id": "pagination_style",
       "label": "Pagination",
       "options": [
-        {
-          "value": "none",
-          "label": "None"
-        },
-        {
-          "value": "dots",
-          "label": "Dots"
-        },
-        {
-          "value": "counter",
-          "label": "Counter"
-        }
+        { "value": "none", "label": "None" },
+        { "value": "dots", "label": "Dots" },
+        { "value": "counter", "label": "Counter" }
       ],
       "default": "dots"
     },
@@ -552,22 +921,10 @@
       "id": "icon_style",
       "label": "Arrow style",
       "options": [
-        {
-          "value": "arrow",
-          "label": "Arrows"
-        },
-        {
-          "value": "chevron",
-          "label": "Chevrons"
-        },
-        {
-          "value": "arrows_large",
-          "label": "Large arrows"
-        },
-        {
-          "value": "chevron_large",
-          "label": "Large chevrons"
-        }
+        { "value": "arrow", "label": "Arrows" },
+        { "value": "chevron", "label": "Chevrons" },
+        { "value": "arrows_large", "label": "Large arrows" },
+        { "value": "chevron_large", "label": "Large chevrons" }
       ],
       "default": "arrows_large",
       "visible_if": "{{ section.settings.show_arrows }}"
@@ -577,18 +934,9 @@
       "id": "icon_shape",
       "label": "Arrow background",
       "options": [
-        {
-          "value": "none",
-          "label": "None"
-        },
-        {
-          "value": "circle",
-          "label": "Circle"
-        },
-        {
-          "value": "square",
-          "label": "Square"
-        }
+        { "value": "none", "label": "None" },
+        { "value": "circle", "label": "Circle" },
+        { "value": "square", "label": "Square" }
       ],
       "default": "none",
       "visible_if": "{{ section.settings.show_arrows }}"
@@ -602,14 +950,8 @@
       "id": "content_direction",
       "label": "Content direction",
       "options": [
-        {
-          "value": "column",
-          "label": "Vertical"
-        },
-        {
-          "value": "row",
-          "label": "Horizontal"
-        }
+        { "value": "column", "label": "Vertical" },
+        { "value": "row", "label": "Horizontal" }
       ],
       "default": "column"
     },
@@ -625,22 +967,10 @@
       "id": "horizontal_alignment",
       "label": "Horizontal alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Right"
-        },
-        {
-          "value": "space-between",
-          "label": "Space between"
-        }
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" },
+        { "value": "space-between", "label": "Space between" }
       ],
       "default": "flex-start",
       "visible_if": "{{ section.settings.content_direction == 'row' }}"
@@ -650,18 +980,9 @@
       "id": "vertical_alignment",
       "label": "Vertical alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Top"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Bottom"
-        }
+        { "value": "flex-start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Bottom" }
       ],
       "default": "center",
       "visible_if": "{{ section.settings.content_direction == 'row' }}"
@@ -678,18 +999,9 @@
       "id": "horizontal_alignment_flex_direction_column",
       "label": "Alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Right"
-        }
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
       ],
       "default": "center",
       "visible_if": "{{ section.settings.content_direction != 'row' }}"
@@ -699,22 +1011,10 @@
       "id": "vertical_alignment_flex_direction_column",
       "label": "Position",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Top"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Bottom"
-        },
-        {
-          "value": "space-between",
-          "label": "Space between"
-        }
+        { "value": "flex-start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Bottom" },
+        { "value": "space-between", "label": "Space between" }
       ],
       "default": "flex-end",
       "visible_if": "{{ section.settings.content_direction == 'column' }}"
@@ -734,14 +1034,8 @@
       "id": "section_width",
       "label": "Content width",
       "options": [
-        {
-          "value": "page-width",
-          "label": "Page"
-        },
-        {
-          "value": "full-width",
-          "label": "Full"
-        }
+        { "value": "page-width", "label": "Page" },
+        { "value": "full-width", "label": "Full" }
       ],
       "default": "page-width"
     },
@@ -750,26 +1044,11 @@
       "id": "section_height",
       "label": "Height",
       "options": [
-        {
-          "value": "small",
-          "label": "Small"
-        },
-        {
-          "value": "medium",
-          "label": "Medium"
-        },
-        {
-          "value": "large",
-          "label": "Large"
-        },
-        {
-          "value": "full-screen",
-          "label": "Full screen"
-        },
-        {
-          "value": "custom",
-          "label": "Custom"
-        }
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "full-screen", "label": "Full screen" },
+        { "value": "custom", "label": "Custom" }
       ],
       "default": "large"
     },
@@ -813,14 +1092,8 @@
       "id": "overlay_style",
       "label": "Overlay style",
       "options": [
-        {
-          "value": "solid",
-          "label": "Solid"
-        },
-        {
-          "value": "gradient",
-          "label": "Gradient"
-        }
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
       ],
       "default": "gradient",
       "visible_if": "{{ section.settings.toggle_overlay }}"
@@ -830,14 +1103,8 @@
       "id": "gradient_direction",
       "label": "Gradient direction",
       "options": [
-        {
-          "value": "to top",
-          "label": "Up"
-        },
-        {
-          "value": "to bottom",
-          "label": "Down"
-        }
+        { "value": "to top", "label": "Up" },
+        { "value": "to bottom", "label": "Down" }
       ],
       "default": "to top",
       "visible_if": "{{ section.settings.toggle_overlay and section.settings.overlay_style == 'gradient' }}"
@@ -872,12 +1139,6 @@
       "name": "Hero Banner",
       "category": "Banners",
       "blocks": {
-        "slide_1": {
-          "type": "slide",
-          "settings": {
-            "media_type": "image"
-          }
-        },
         "text_1": {
           "type": "text",
           "settings": {
@@ -894,8 +1155,9 @@
           }
         }
       },
-      "block_order": ["slide_1", "text_1", "button_1"],
+      "block_order": ["text_1", "button_1"],
       "settings": {
+        "media_type_1": "image",
         "autoplay": true,
         "autoplay_speed": 5,
         "horizontal_alignment_flex_direction_column": "center",
