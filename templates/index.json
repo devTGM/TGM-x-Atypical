@@ -360,6 +360,20 @@
         "padding-block-end": 17
       }
     },
+    "divider_nUHMmD": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5",
+        "section_width": "full-width",
+        "thickness": 3,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 4,
+        "padding-block-end": 0
+      }
+    },
     "custom_liquid_gfhkEA": {
       "type": "custom-liquid",
       "name": "t:names.custom_liquid",
@@ -367,6 +381,20 @@
         "custom_liquid": "<style>\nvideo {\nwidth: 100%;\nheight: auto;\ndisplay: block;\nmargin: 0 auto;\n}\n</style>\n<video muted autoplay playsinline loop>\n    <source src=\"/media/cc0-videos/flower.webm\"\n                  type=\"video/mp4\">\n    <source src=\"https://cdn.shopify.com/videos/c/o/v/e573abce19f74edda85f6e0c2e4628df.mp4\"\n                  type=\"video/mp4\">\n</video>",
         "color_scheme": "",
         "section_width": "full-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "divider_kDnCLa": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5",
+        "section_width": "full-width",
+        "thickness": 3,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
         "padding-block-start": 0,
         "padding-block-end": 0
       }
@@ -1614,7 +1642,9 @@
     "marquee_GGJV8j",
     "divider_icFjdd",
     "product_list_fa6P9H",
+    "divider_nUHMmD",
     "custom_liquid_gfhkEA",
+    "divider_kDnCLa",
     "product_list_VwBgii",
     "product_list_ecyYyr",
     "product_list_Yp6nUa",
