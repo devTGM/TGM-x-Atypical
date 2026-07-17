@@ -356,8 +356,8 @@
         "horizontal_alignment": "flex-start",
         "gap": 28,
         "color_scheme": "scheme-1",
-        "padding-block-start": 23,
-        "padding-block-end": 17
+        "padding-block-start": 30,
+        "padding-block-end": 30
       }
     },
     "divider_nUHMmD": {
