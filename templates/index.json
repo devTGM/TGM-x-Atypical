@@ -139,6 +139,15 @@
         "gap_between_elements": 24
       }
     },
+    "bluorng_collection_LCLciw": {
+      "type": "bluorng-collection",
+      "name": "Bluorng Collection",
+      "settings": {
+        "title": "Bestsellers",
+        "collection": "ringer-tees",
+        "limit": 8
+      }
+    },
     "product_list_fa6P9H": {
       "type": "product-list",
       "blocks": {
@@ -1580,6 +1589,7 @@
   "order": [
     "hero_banner_main",
     "marquee_GGJV8j",
+    "bluorng_collection_LCLciw",
     "product_list_fa6P9H",
     "product_list_ecyYyr",
     "section_99Dqzf",
