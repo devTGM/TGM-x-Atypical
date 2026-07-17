@@ -117,7 +117,107 @@
         "text_cdetxd": {
           "type": "text",
           "settings": {
-            "text": "<p>We make things that work better and last longer.</p>",
+            "text": "<p><strong>• PREMIUM STREETWEAR </strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_czVDM3": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>• FREE SHIPPING ABOVE ₹999 </strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_xMGNNg": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>• EASY EXCHANGES </strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_P7LJWD": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>• MADE IN INDIA </strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_TEeRWN": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>• LIMITED DROPS</strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -141,7 +241,11 @@
         }
       },
       "block_order": [
-        "text_cdetxd"
+        "text_cdetxd",
+        "text_czVDM3",
+        "text_xMGNNg",
+        "text_P7LJWD",
+        "text_TEeRWN"
       ],
       "name": "t:names.marquee_section",
       "settings": {
