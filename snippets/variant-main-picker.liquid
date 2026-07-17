@@ -74,11 +74,19 @@
             ref="fieldsets[]"
             {{ option_id_attribute }}
           >
-            <legend>
-              {{ product_option.name | escape -}}
-              {%- if variant_style == 'swatch' -%}
-                <span class="variant-option__swatch-value">{{ product_option.selected_value }}</span>
-              {%- endif %}
+            <legend style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span>
+                {{ product_option.name | escape -}}
+                {%- if variant_style == 'swatch' -%}
+                  <span class="variant-option__swatch-value">{{ product_option.selected_value }}</span>
+                {%- endif %}
+              </span>
+              {%- assign option_name_downcased = product_option.name | downcase -%}
+              {%- if option_name_downcased == 'size' and product_resource.metafields.custom.size_chart != blank -%}
+                <button type="button" class="unstyled-button link" style="text-decoration: underline; font-size: var(--font-size--sm); text-transform: capitalize; letter-spacing: normal;" on:click="#size-guide-modal-{{ product_resource.id }}/showDialog">
+                  Size Guide
+                </button>
+              {%- endif -%}
             </legend>
             {%- for product_option_value in product_option.values -%}
               {% if product_option_value.size > longest_value and option_id_attribute %}
@@ -220,6 +228,39 @@
       </script>
     </form>
   </variant-picker>
+
+  {%- if product_resource.metafields.custom.size_chart != blank -%}
+    <script src="{{ 'dialog.js' | asset_url }}" type="module" fetchpriority="low"></script>
+    <dialog-component id="size-guide-modal-{{ product_resource.id }}" class="size-guide-modal">
+      <dialog ref="dialog" class="size-guide-modal__content dialog-modal" on:click="/closeDialogOnClickOutside" on:keydown="/closeDialogOnEscapePress" scroll-lock aria-labelledby="size-guide-heading">
+        <div class="size-guide-modal__inner" style="position: relative; padding: 24px; background: var(--color-background); max-width: 90vw; max-height: 90vh; overflow: auto; border-radius: var(--border-radius);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2 id="size-guide-heading" class="h4" style="margin: 0;">Size Guide</h2>
+            <button type="button" class="unstyled-button" on:click="dialog-component/closeDialog" aria-label="Close" style="width: 24px; height: 24px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <img src="{{ product_resource.metafields.custom.size_chart | image_url: width: 1200 }}" alt="Size Guide" style="max-width: 100%; height: auto; display: block;" loading="lazy">
+        </div>
+      </dialog>
+    </dialog-component>
+    {% style %}
+      .size-guide-modal__content {
+        border: none;
+        padding: 0;
+        background: transparent;
+        margin: auto;
+        max-width: 800px;
+        width: 100%;
+      }
+      .size-guide-modal__content::backdrop {
+        background: rgba(0,0,0,0.6);
+      }
+      .size-guide-modal__content::-webkit-scrollbar {
+        display: none;
+      }
+    {% endstyle %}
+  {%- endif -%}
 {% endunless %}
 
 {% stylesheet %}
