@@ -982,6 +982,20 @@
         "padding-block-end": 48
       }
     },
+    "divider_D3PKRW": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "",
+        "section_width": "full-width",
+        "thickness": 2,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
+    },
     "media_with_content_YKyK7x": {
       "type": "media-with-content",
       "blocks": {
@@ -1648,6 +1662,7 @@
     "product_list_VwBgii",
     "product_list_ecyYyr",
     "product_list_Yp6nUa",
+    "divider_D3PKRW",
     "media_with_content_YKyK7x",
     "section_99Dqzf",
     "product_list_rMp3Ji",
