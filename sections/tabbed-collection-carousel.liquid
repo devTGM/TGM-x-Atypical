@@ -20,138 +20,135 @@
   "
   data-section-id="{{ section.id }}"
 >
-  {%- if tabs.size > 0 -%}
-    <div class="tabbed-carousel__header">
-      <div class="tabbed-carousel__tabs" role="tablist">
+  <div class="tabbed-carousel__inner">
+    {%- if tabs.size > 0 -%}
+      <div class="tabbed-carousel__header">
+        <div class="tabbed-carousel__tabs" role="tablist">
+          {%- for block in tabs -%}
+            {%- assign collection = block.settings.collection -%}
+            {%- assign tab_label = block.settings.tab_label | default: collection.title | default: 'Collection' -%}
+            
+            <button 
+              type="button" 
+              role="tab" 
+              class="tabbed-carousel__tab {% if forloop.first %}is-active{% endif %}" 
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-controls="panel-{{ section.id }}-{{ forloop.index }}"
+              data-target="panel-{{ section.id }}-{{ forloop.index }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ tab_label }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div class="tabbed-carousel__panels">
         {%- for block in tabs -%}
           {%- assign collection = block.settings.collection -%}
-          {%- assign tab_label = block.settings.tab_label | default: collection.title | default: 'Collection' -%}
           
-          <button 
-            type="button" 
-            role="tab" 
-            class="tabbed-carousel__tab {% if forloop.first %}is-active{% endif %}" 
-            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-            aria-controls="panel-{{ section.id }}-{{ forloop.index }}"
-            data-target="panel-{{ section.id }}-{{ forloop.index }}"
-            {{ block.shopify_attributes }}
+          <div 
+            id="panel-{{ section.id }}-{{ forloop.index }}" 
+            class="tabbed-carousel__panel {% if forloop.first %}is-active{% endif %}"
+            role="tabpanel"
           >
-            {{ tab_label }}
-          </button>
-        {%- endfor -%}
-      </div>
-    </div>
-
-    <div class="tabbed-carousel__panels">
-      {%- for block in tabs -%}
-        {%- assign collection = block.settings.collection -%}
-        
-        <div 
-          id="panel-{{ section.id }}-{{ forloop.index }}" 
-          class="tabbed-carousel__panel {% if forloop.first %}is-active{% endif %}"
-          role="tabpanel"
-        >
-          {%- capture list_items -%}
-            {%- if collection != blank -%}
-              {%- for product in collection.products limit: max_products -%}
-                <div class="resource-list__item">
-                  {%- comment -%} 
-                    We render our own custom product card HTML to have full control over the badges and layout to match the sunya reference.
-                  {%- endcomment -%}
-                  <div class="sunya-card">
-                    <a href="{{ product.url }}" class="sunya-card__link">
-                      <div class="sunya-card__image-wrapper">
-                        {%- if product.featured_media -%}
-                          {{ product.featured_media | image_url: width: 600 | image_tag: class: 'sunya-card__image', loading: 'lazy' }}
-                        {%- else -%}
-                          {{ 'product-1' | placeholder_svg_tag: 'sunya-card__image' }}
-                        {%- endif -%}
-
-                        {%- comment -%} Custom Badge Logic (Top Left) {%- endcomment -%}
-                        {%- assign custom_badge = '' -%}
-                        {%- for tag in product.tags -%}
-                          {%- if tag contains 'badge:' -%}
-                            {%- assign custom_badge = tag | split: 'badge:' | last -%}
-                            {%- break -%}
+            {%- capture list_items -%}
+              {%- if collection != blank -%}
+                {%- for product in collection.products limit: max_products -%}
+                  <div class="resource-list__item">
+                    <div class="sunya-card">
+                      <a href="{{ product.url }}" class="sunya-card__link">
+                        <div class="sunya-card__image-wrapper">
+                          {%- if product.featured_media -%}
+                            {{ product.featured_media | image_url: width: 600 | image_tag: class: 'sunya-card__image', loading: 'lazy' }}
+                          {%- else -%}
+                            {{ 'product-1' | placeholder_svg_tag: 'sunya-card__image' }}
                           {%- endif -%}
-                        {%- endfor -%}
-                        
-                        {%- if custom_badge != blank -%}
-                          <div class="sunya-card__badge-top-left">{{ custom_badge }}</div>
-                        {%- endif -%}
 
-                        {%- comment -%} Custom Rating Logic (Bottom Left) {%- endcomment -%}
-                        {%- assign rating = product.metafields.reviews.rating.value | default: '4.8' -%}
+                          {%- assign custom_badge = '' -%}
+                          {%- for tag in product.tags -%}
+                            {%- if tag contains 'badge:' -%}
+                              {%- assign custom_badge = tag | split: 'badge:' | last -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                          
+                          {%- if custom_badge != blank -%}
+                            <div class="sunya-card__badge-top-left">{{ custom_badge }}</div>
+                          {%- endif -%}
+
+                          {%- assign rating = product.metafields.reviews.rating.value | default: '4.8' -%}
+                          <div class="sunya-card__badge-bottom-left">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFB800" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span>{{ rating }}</span>
+                          </div>
+                        </div>
+
+                        <div class="sunya-card__info">
+                          <h3 class="sunya-card__title">{{ product.title }}</h3>
+                          <div class="sunya-card__price">
+                            {%- if product.compare_at_price > product.price -%}
+                              <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
+                              <span class="sunya-card__price-compare">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
+                            {%- else -%}
+                              <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- for i in (1..max_products) -%}
+                  <div class="resource-list__item">
+                    <div class="sunya-card">
+                      <div class="sunya-card__image-wrapper">
+                        {{ 'product-' | append: i | placeholder_svg_tag: 'sunya-card__image' }}
+                        <div class="sunya-card__badge-top-left">BEST SELLER</div>
                         <div class="sunya-card__badge-bottom-left">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFB800" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                           </svg>
-                          <span>{{ rating }}</span>
+                          <span>5.0</span>
                         </div>
                       </div>
-
                       <div class="sunya-card__info">
-                        <h3 class="sunya-card__title">{{ product.title }}</h3>
+                        <h3 class="sunya-card__title">Example Product</h3>
                         <div class="sunya-card__price">
-                          {%- if product.compare_at_price > product.price -%}
-                            <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
-                            <span class="sunya-card__price-compare">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
-                          {%- else -%}
-                            <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
-                          {%- endif -%}
+                          <span class="sunya-card__price-current">{{ 150000 | money_without_trailing_zeros }}</span>
+                          <span class="sunya-card__price-compare">{{ 200000 | money_without_trailing_zeros }}</span>
                         </div>
                       </div>
-                    </a>
-                  </div>
-                </div>
-                {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
-              {%- endfor -%}
-            {%- else -%}
-              {%- for i in (1..max_products) -%}
-                <div class="resource-list__item">
-                  <div class="sunya-card">
-                    <div class="sunya-card__image-wrapper">
-                      {{ 'product-' | append: i | placeholder_svg_tag: 'sunya-card__image' }}
-                      <div class="sunya-card__badge-top-left">BEST SELLER</div>
-                      <div class="sunya-card__badge-bottom-left">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFB800" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                        <span>5.0</span>
-                      </div>
-                    </div>
-                    <div class="sunya-card__info">
-                      <h3 class="sunya-card__title">Example Product</h3>
-                      <div class="sunya-card__price">
-                        <span class="sunya-card__price-current">{{ 150000 | money_without_trailing_zeros }}</span>
-                        <span class="sunya-card__price-compare">{{ 200000 | money_without_trailing_zeros }}</span>
-                      </div>
                     </div>
                   </div>
-                </div>
-                {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
-              {%- endfor -%}
-            {%- endif -%}
-          {%- endcapture -%}
-          
-          {%- assign list_items_array = list_items | strip | split: '<!--@list/split-->' -%}
-          
-          {%- render 'resource-list',
-            list_items: list_items,
-            list_items_array: list_items_array,
-            settings: section.settings,
-            slide_count: max_products,
-            content_type: 'products',
-            test_id: 'tabbed-carousel-grid'
-          -%}
-        </div>
-      {%- endfor -%}
-    </div>
-  {%- else -%}
-    <div class="tabbed-carousel__empty center">
-      <p>Add Collection Tab blocks to display products.</p>
-    </div>
-  {%- endif -%}
+                  {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endcapture -%}
+            
+            {%- assign list_items_array = list_items | strip | split: '<!--@list/split-->' -%}
+            
+            {%- render 'resource-list',
+              list_items: list_items,
+              list_items_array: list_items_array,
+              settings: section.settings,
+              slide_count: max_products,
+              content_type: 'products',
+              test_id: 'tabbed-carousel-grid'
+            -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="tabbed-carousel__empty center">
+        <p>Add Collection Tab blocks to display products.</p>
+      </div>
+    {%- endif -%}
+  </div>
 </div>
 
 <script>
@@ -183,6 +180,21 @@
 </script>
 
 {% stylesheet %}
+  .tabbed-carousel__inner {
+    background-color: var(--color-background, #ffffff);
+    border-radius: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 32px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+  }
+
+  @media screen and (max-width: 749px) {
+    .tabbed-carousel__inner {
+      padding: 16px;
+      border-radius: 16px;
+    }
+  }
+
   .tabbed-carousel__header {
     display: flex;
     justify-content: flex-start;
@@ -204,10 +216,10 @@
   }
 
   .tabbed-carousel__tab {
-    background-color: var(--color-background-secondary, #F5F5F5);
-    color: var(--color-foreground, #333333);
-    border: none;
-    border-radius: 8px;
+    background-color: var(--color-background-secondary, #Fcfcfc);
+    color: var(--active-tab-bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 12px;
     padding: 12px 24px;
     font-weight: 600;
     font-size: 14px;
@@ -246,8 +258,10 @@
     flex-direction: column;
     height: 100%;
     background: #F9F9F9;
-    border-radius: 12px;
+    border-radius: 20px;
     overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   }
 
   .sunya-card__link {
@@ -347,10 +361,16 @@
   
   .tabbed-carousel slideshow-controls {
     position: absolute;
-    top: -56px;
+    top: -72px; /* Aligns with the tabs based on standard heights */
     right: 0;
     width: auto;
     z-index: 10;
+  }
+
+  @media screen and (max-width: 749px) {
+    .tabbed-carousel slideshow-controls {
+      top: -64px;
+    }
   }
   
   .tabbed-carousel slideshow-pagination {
