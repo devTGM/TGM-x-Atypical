@@ -111,6 +111,33 @@
   transform: scale(1.1) !important;
   box-shadow: none !important;
 }
+
+/* FIX: Added styles for wishlist toggle to position it properly */
+.wishlist-toggle--bluorng {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+}
+.wishlist-toggle--bluorng svg {
+  fill: transparent;
+  stroke: #000;
+  stroke-width: 1.5px;
+  transition: all 0.2s ease;
+}
+.wishlist-toggle--bluorng:hover svg {
+  fill: #000;
+}
+
+/* FIX: Removed default form margin */
+.bluorng-card-info form {
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .bluorng-collection-wrapper { padding: 20px; border-radius: 16px; margin: 20px auto; }
   .bluorng-card { flex: 0 0 85%; }
@@ -129,32 +156,49 @@
         {% for product in collection.products limit: section.settings.limit %}
           <div class="bluorng-card">
             <a href="{{ product.url }}" class="bluorng-card-link-wrapper" style="text-decoration:none; color:inherit; display:block; position:relative;">
-              <img class="bluorng-card-image" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title }}" loading="lazy">
+              {%- if product.featured_media -%}
+                <img class="bluorng-card-image" src="{{ product.featured_media | image_url: width: 600 }}" alt="{{ product.title }}" loading="lazy">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'bluorng-card-image' }}
+              {%- endif -%}
             </a>
+            
             <button class="wishlist-toggle wishlist-toggle--bluorng" data-product-handle="{{ product.handle }}" aria-label="Add to wishlist">
-              <svg width="24" height="24" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             </button>
+            
             <div class="bluorng-card-info">
               <a href="{{ product.url }}" class="bluorng-card-text" style="text-decoration:none;">
                 <h4>{{ product.title }}</h4>
                 <p>{{ product.price | money }}</p>
               </a>
-              <button class="bluorng-add-btn" aria-label="Add to cart">+</button>
+              
+              {%- comment -%}
+                FIX: Wrapped the + button in a proper Shopify add-to-cart form so it actually works.
+              {%- endcomment -%}
+              {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+              <product-form>
+                {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled>
+                  <button type="submit" name="add" class="bluorng-add-btn" aria-label="Add to cart" {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}>+</button>
+                {%- endform -%}
+              </product-form>
+              
             </div>
           </div>
         {% endfor %}
       {% else %}
         {% for i in (1..4) %}
-          <a href="#" class="bluorng-card">
+          <div class="bluorng-card">
             <div style="background:#e0e0e0; aspect-ratio:1; width:100%; border-radius:12px;"></div>
             <div class="bluorng-card-info">
               <div class="bluorng-card-text">
                 <h4>Sample Cap {{ i }}</h4>
-                <p>RS. 3,200</p>
+                <p>Rs. 3,200</p>
               </div>
               <button class="bluorng-add-btn">+</button>
             </div>
-          </a>
+          </div>
         {% endfor %}
       {% endif %}
     </div>
