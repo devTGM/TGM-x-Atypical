@@ -1,0 +1,514 @@
+{%- liquid
+  assign max_products = section.settings.max_products | default: 8
+  assign tabs = section.blocks | where: 'type', 'collection_tab'
+  
+  if section.settings.color_scheme == 'custom'
+    assign active_bg = section.settings.active_tab_bg
+    assign active_text = section.settings.active_tab_text
+  else
+    assign active_bg = '#5b1414'
+    assign active_text = '#FFFFFF'
+  endif
+-%}
+
+<div 
+  class="tabbed-carousel section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --active-tab-bg: {{ active_bg }};
+    --active-tab-text: {{ active_text }};
+  "
+  data-section-id="{{ section.id }}"
+>
+  {%- if tabs.size > 0 -%}
+    <div class="tabbed-carousel__header">
+      <div class="tabbed-carousel__tabs" role="tablist">
+        {%- for block in tabs -%}
+          {%- assign collection = block.settings.collection -%}
+          {%- assign tab_label = block.settings.tab_label | default: collection.title | default: 'Collection' -%}
+          
+          <button 
+            type="button" 
+            role="tab" 
+            class="tabbed-carousel__tab {% if forloop.first %}is-active{% endif %}" 
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-controls="panel-{{ section.id }}-{{ forloop.index }}"
+            data-target="panel-{{ section.id }}-{{ forloop.index }}"
+            {{ block.shopify_attributes }}
+          >
+            {{ tab_label }}
+          </button>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="tabbed-carousel__panels">
+      {%- for block in tabs -%}
+        {%- assign collection = block.settings.collection -%}
+        
+        <div 
+          id="panel-{{ section.id }}-{{ forloop.index }}" 
+          class="tabbed-carousel__panel {% if forloop.first %}is-active{% endif %}"
+          role="tabpanel"
+        >
+          {%- capture list_items -%}
+            {%- if collection != blank -%}
+              {%- for product in collection.products limit: max_products -%}
+                <div class="resource-list__item">
+                  {%- comment -%} 
+                    We render our own custom product card HTML to have full control over the badges and layout to match the sunya reference.
+                  {%- endcomment -%}
+                  <div class="sunya-card">
+                    <a href="{{ product.url }}" class="sunya-card__link">
+                      <div class="sunya-card__image-wrapper">
+                        {%- if product.featured_media -%}
+                          {{ product.featured_media | image_url: width: 600 | image_tag: class: 'sunya-card__image', loading: 'lazy' }}
+                        {%- else -%}
+                          {{ 'product-1' | placeholder_svg_tag: 'sunya-card__image' }}
+                        {%- endif -%}
+
+                        {%- comment -%} Custom Badge Logic (Top Left) {%- endcomment -%}
+                        {%- assign custom_badge = '' -%}
+                        {%- for tag in product.tags -%}
+                          {%- if tag contains 'badge:' -%}
+                            {%- assign custom_badge = tag | split: 'badge:' | last -%}
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        
+                        {%- if custom_badge != blank -%}
+                          <div class="sunya-card__badge-top-left">{{ custom_badge }}</div>
+                        {%- endif -%}
+
+                        {%- comment -%} Custom Rating Logic (Bottom Left) {%- endcomment -%}
+                        {%- assign rating = product.metafields.reviews.rating.value | default: '4.8' -%}
+                        <div class="sunya-card__badge-bottom-left">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFB800" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                          </svg>
+                          <span>{{ rating }}</span>
+                        </div>
+                      </div>
+
+                      <div class="sunya-card__info">
+                        <h3 class="sunya-card__title">{{ product.title }}</h3>
+                        <div class="sunya-card__price">
+                          {%- if product.compare_at_price > product.price -%}
+                            <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
+                            <span class="sunya-card__price-compare">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
+                          {%- else -%}
+                            <span class="sunya-card__price-current">{{ product.price | money_without_trailing_zeros }}</span>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for i in (1..max_products) -%}
+                <div class="resource-list__item">
+                  <div class="sunya-card">
+                    <div class="sunya-card__image-wrapper">
+                      {{ 'product-' | append: i | placeholder_svg_tag: 'sunya-card__image' }}
+                      <div class="sunya-card__badge-top-left">BEST SELLER</div>
+                      <div class="sunya-card__badge-bottom-left">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFB800" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span>5.0</span>
+                      </div>
+                    </div>
+                    <div class="sunya-card__info">
+                      <h3 class="sunya-card__title">Example Product</h3>
+                      <div class="sunya-card__price">
+                        <span class="sunya-card__price-current">{{ 150000 | money_without_trailing_zeros }}</span>
+                        <span class="sunya-card__price-compare">{{ 200000 | money_without_trailing_zeros }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {%- unless forloop.last -%}<!--@list/split-->{%- endunless -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endcapture -%}
+          
+          {%- assign list_items_array = list_items | strip | split: '<!--@list/split-->' -%}
+          
+          {%- render 'resource-list',
+            list_items: list_items,
+            list_items_array: list_items_array,
+            settings: section.settings,
+            slide_count: max_products,
+            content_type: 'products',
+            test_id: 'tabbed-carousel-grid'
+          -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    <div class="tabbed-carousel__empty center">
+      <p>Add Collection Tab blocks to display products.</p>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!section) return;
+
+    const tabs = section.querySelectorAll('.tabbed-carousel__tab');
+    const panels = section.querySelectorAll('.tabbed-carousel__panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        panels.forEach(p => p.classList.remove('is-active'));
+
+        this.classList.add('is-active');
+        this.setAttribute('aria-selected', 'true');
+        const targetId = this.getAttribute('data-target');
+        const targetPanel = section.querySelector('#' + targetId);
+        if (targetPanel) {
+          targetPanel.classList.add('is-active');
+        }
+      });
+    });
+  });
+</script>
+
+{% stylesheet %}
+  .tabbed-carousel__header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    position: relative;
+  }
+  
+  .tabbed-carousel__tabs {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  
+  .tabbed-carousel__tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabbed-carousel__tab {
+    background-color: var(--color-background-secondary, #F5F5F5);
+    color: var(--color-foreground, #333333);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .tabbed-carousel__tab.is-active {
+    background-color: var(--active-tab-bg);
+    color: var(--active-tab-text);
+  }
+
+  .tabbed-carousel__panel {
+    display: none;
+  }
+
+  .tabbed-carousel__panel.is-active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* 
+    ======================================
+    Custom Product Card Styles
+    ======================================
+  */
+  
+  .sunya-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #F9F9F9;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .sunya-card__link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .sunya-card__image-wrapper {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+  }
+
+  .sunya-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .sunya-card:hover .sunya-card__image {
+    transform: scale(1.05);
+  }
+
+  .sunya-card__badge-top-left {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: var(--active-tab-bg);
+    color: var(--active-tab-text);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .sunya-card__badge-bottom-left {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background-color: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 2;
+  }
+
+  .sunya-card__info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #F9F9F9;
+  }
+
+  .sunya-card__title {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    margin: 0;
+    color: #000;
+  }
+
+  .sunya-card__price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .sunya-card__price-current {
+    font-weight: 600;
+    color: #333333;
+  }
+
+  .sunya-card__price-compare {
+    color: #999999;
+    text-decoration: line-through;
+    font-size: 12px;
+  }
+
+  /* Carousel controls repositioning */
+  .tabbed-carousel .resource-list__carousel {
+    position: relative;
+  }
+  
+  .tabbed-carousel slideshow-controls {
+    position: absolute;
+    top: -56px;
+    right: 0;
+    width: auto;
+    z-index: 10;
+  }
+  
+  .tabbed-carousel slideshow-pagination {
+    display: none !important;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tabbed Carousel",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "collection_tab",
+      "name": "Collection Tab",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_label",
+          "label": "Tab Label",
+          "info": "Leave blank to use the collection title"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "label": "Maximum products per tab"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "options": [
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "carousel",
+      "label": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "default": 16,
+      "label": "Column gap (px)"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width",
+      "label": "Section width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "Arrow style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow", "label": "Arrows" },
+        { "value": "chevron", "label": "Chevrons" },
+        { "value": "arrows_large", "label": "Large arrows" },
+        { "value": "chevron_large", "label": "Large chevrons" }
+      ],
+      "default": "chevron_large"
+    },
+    {
+      "type": "select",
+      "id": "icons_shape",
+      "label": "Arrow background shape",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "circle", "label": "Circle" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "header",
+      "content": "Tab Colors"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_bg",
+      "label": "Active Tab Background",
+      "default": "#5b1414"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_text",
+      "label": "Active Tab Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabbed Carousel",
+      "blocks": [
+        { "type": "collection_tab" },
+        { "type": "collection_tab" }
+      ]
+    }
+  ]
+}
+{% endschema %}
