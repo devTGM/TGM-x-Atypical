@@ -43,16 +43,11 @@
   overflow-x: auto;
   padding-bottom: 24px;
   scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 .bluorng-grid::-webkit-scrollbar {
-  height: 6px;
-}
-.bluorng-grid::-webkit-scrollbar-track {
-  background: transparent;
-}
-.bluorng-grid::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 10px;
+  display: none;
 }
 .bluorng-card {
   flex: 0 0 calc(25% - 18px);
