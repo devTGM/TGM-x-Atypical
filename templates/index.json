@@ -90,11 +90,52 @@
         "section_height_custom": 77,
         "color_scheme": "scheme-6",
         "toggle_overlay": true,
-        "overlay_color": "#1212123B",
+        "overlay_color": "#1212123b",
         "overlay_style": "solid",
         "gradient_direction": "to bottom",
         "padding-block-start": 100,
         "padding-block-end": 72
+      }
+    },
+    "marquee_GGJV8j": {
+      "type": "marquee",
+      "blocks": {
+        "text_cdetxd": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We make things that work better and last longer.</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_cdetxd"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "reverse",
+        "color_scheme": "scheme-58084d4c-a86e-4d0a-855e-a0966e5043f7",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
       }
     },
     "product_list_fa6P9H": {
@@ -1537,6 +1578,7 @@
   },
   "order": [
     "hero_banner_main",
+    "marquee_GGJV8j",
     "product_list_fa6P9H",
     "product_list_ecyYyr",
     "section_99Dqzf",
