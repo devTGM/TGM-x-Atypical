@@ -141,7 +141,7 @@
     },
     "bluorng_collection_LCLciw": {
       "type": "bluorng-collection",
-      "name": "Bluorng Collection",
+      "name": "Featured Collection",
       "settings": {
         "title": "Bestsellers",
         "collection": "ringer-tees",
