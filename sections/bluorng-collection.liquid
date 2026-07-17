@@ -134,8 +134,60 @@
 }
 
 @media (max-width: 768px) {
-  .bluorng-collection-wrapper { padding: 20px; border-radius: 16px; margin: 20px auto; }
-  .bluorng-card { flex: 0 0 85%; }
+  .bluorng-collection-wrapper { 
+    padding: 16px 0; 
+    border-radius: 0; 
+    margin: 0 auto; 
+    background: transparent;
+  }
+  .bluorng-header {
+    margin-bottom: 20px;
+    padding: 0 16px;
+  }
+  .bluorng-title {
+    font-size: 1.1rem !important;
+  }
+  .bluorng-discover-btn {
+    padding: 6px 16px;
+    font-size: 0.8rem;
+  }
+  .bluorng-grid { 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    overflow-x: visible;
+    padding-bottom: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .bluorng-card { 
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+  }
+  .bluorng-card-info {
+    margin-top: 12px;
+    align-items: flex-start;
+  }
+  .bluorng-card-text h4 {
+    font-size: 0.8rem !important;
+  }
+  .bluorng-card-text p {
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+  .wishlist-toggle--bluorng {
+    top: 12px;
+    right: 12px;
+  }
+  .wishlist-toggle--bluorng svg {
+    width: 16px;
+    height: 16px;
+  }
+  .bluorng-add-btn {
+    font-size: 1.4rem;
+  }
 }
 </style>
 
