@@ -246,7 +246,7 @@
               "name": "t:names.menu",
               "settings": {
                 "menu": "footer-men-1",
-                "heading": "Shop By Collection",
+                "heading": "Shop",
                 "menu_spacing": 12,
                 "show_as_accordion": true,
                 "accordion_icon": "caret",
