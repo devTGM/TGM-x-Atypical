@@ -244,8 +244,8 @@
                 "accordion_row_description": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "Product Pescription",
-                    "open_by_default": false,
+                    "heading": "Product description",
+                    "open_by_default": true,
                     "icon": "clipboard",
                     "width": 20
                   },
