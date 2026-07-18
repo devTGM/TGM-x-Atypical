@@ -404,12 +404,20 @@
                 "accordion_row_XEDJL7",
                 "accordion_row_kTabnF"
               ]
+            },
+            "whatsapp_customisation": {
+              "type": "whatsapp-button",
+              "settings": {
+                "whatsapp_number": "1234567890",
+                "text": "Chat on Whatsapp for Size Customisation"
+              }
             }
           },
           "block_order": [
             "group_icgrde",
             "divider_VJhene",
             "variant_picker_R3rGDr",
+            "whatsapp_customisation",
             "buy_buttons_eYQEYi",
             "accordion_yAUttc"
           ]
