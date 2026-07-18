@@ -1,0 +1,34 @@
+{% assign block_settings = block.settings %}
+<div class="tab-item-data" data-title="{{ block_settings.title | escape }}" data-id="{{ block.id }}">
+  <div class="tab-content-inner">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Tab",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Tab Title",
+      "default": "Tab Title"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tab"
+    }
+  ]
+}
+{% endschema %}
