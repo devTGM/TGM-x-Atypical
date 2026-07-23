@@ -478,6 +478,85 @@
         "padding-block-end": 0
       }
     },
+    "shoppable_reels_main": {
+      "type": "shoppable-reels",
+      "blocks": {
+        "reel_1": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/68f5bf21530b4eb0b3626f3d81741ef1.mov",
+            "product": ""
+          }
+        },
+        "reel_2": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/f90eed5d165f4c948839dec1d87b43cb.mov",
+            "product": ""
+          }
+        },
+        "reel_3": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/0b131c0944444cfebad9301a37327a50.mp4",
+            "product": ""
+          }
+        },
+        "reel_4": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/28cef17cd8a842b6878f5244af043715.mp4",
+            "product": ""
+          }
+        },
+        "reel_qaAERp": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/300a86180f1547fabfd56d4132ce4c9e.mp4",
+            "product": ""
+          }
+        },
+        "reel_mnWJRM": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/d3c643340fee43619242a1328dc56a84.mov",
+            "product": ""
+          }
+        },
+        "reel_rAtmwB": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/b1467e5c22344ddeaf5b21cf9c3b3fe7.mov",
+            "product": ""
+          }
+        },
+        "reel_6BmQmm": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/d966d56f9a6043cbb3bcfec8ea9f6a8e.mp4",
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "reel_1",
+        "reel_2",
+        "reel_3",
+        "reel_4",
+        "reel_qaAERp",
+        "reel_mnWJRM",
+        "reel_rAtmwB",
+        "reel_6BmQmm"
+      ],
+      "settings": {
+        "title": "Shop the Collection Live",
+        "font_size": 24,
+        "heading_alignment": "center",
+        "text_transform": "uppercase",
+        "auto_rotate": true,
+        "auto_rotate_speed": 3
+      }
+    },
     "custom_liquid_gfhkEA": {
       "type": "custom-liquid",
       "name": "t:names.custom_liquid",
@@ -903,85 +982,6 @@
         "color_scheme": "scheme-1",
         "padding-block-start": 30,
         "padding-block-end": 30
-      }
-    },
-    "shoppable_reels_main": {
-      "type": "shoppable-reels",
-      "blocks": {
-        "reel_1": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/68f5bf21530b4eb0b3626f3d81741ef1.mov",
-            "product": ""
-          }
-        },
-        "reel_2": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/f90eed5d165f4c948839dec1d87b43cb.mov",
-            "product": ""
-          }
-        },
-        "reel_3": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/0b131c0944444cfebad9301a37327a50.mp4",
-            "product": ""
-          }
-        },
-        "reel_4": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/28cef17cd8a842b6878f5244af043715.mp4",
-            "product": ""
-          }
-        },
-        "reel_qaAERp": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/300a86180f1547fabfd56d4132ce4c9e.mp4",
-            "product": ""
-          }
-        },
-        "reel_mnWJRM": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/d3c643340fee43619242a1328dc56a84.mov",
-            "product": ""
-          }
-        },
-        "reel_rAtmwB": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/b1467e5c22344ddeaf5b21cf9c3b3fe7.mov",
-            "product": ""
-          }
-        },
-        "reel_6BmQmm": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/d966d56f9a6043cbb3bcfec8ea9f6a8e.mp4",
-            "product": ""
-          }
-        }
-      },
-      "block_order": [
-        "reel_1",
-        "reel_2",
-        "reel_3",
-        "reel_4",
-        "reel_qaAERp",
-        "reel_mnWJRM",
-        "reel_rAtmwB",
-        "reel_6BmQmm"
-      ],
-      "settings": {
-        "title": "Shop the Collection Live",
-        "font_size": 24,
-        "heading_alignment": "center",
-        "text_transform": "uppercase",
-        "auto_rotate": true,
-        "auto_rotate_speed": 3
       }
     },
     "product_list_Yp6nUa": {
@@ -1881,12 +1881,12 @@
     "divider_icFjdd",
     "product_list_fa6P9H",
     "divider_nUHMmD",
-    "custom_liquid_gfhkEA",
+    "shoppable_reels_main",
     "divider_kDnCLa",
     "product_list_VwBgii",
     "divider_neXhcg",
     "product_list_ecyYyr",
-    "shoppable_reels_main",
+    "custom_liquid_gfhkEA",
     "product_list_Yp6nUa",
     "divider_D3PKRW",
     "media_with_content_YKyK7x",
