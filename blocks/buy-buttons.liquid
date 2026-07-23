@@ -390,9 +390,17 @@
     flex-basis: 51%;
   }
 
-  .product-form-buttons button {
+  .product-form-buttons button,
+  .product-form-buttons .flexy-btn {
     width: 100%;
     padding-block: var(--padding-lg);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.25s ease-in-out !important;
+  }
+
+  .product-form-buttons button:hover:not(:disabled),
+  .product-form-buttons .flexy-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
   }
 
   .quantity-selector {
