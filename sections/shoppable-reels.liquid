@@ -184,6 +184,7 @@
                   src="{{ block.settings.video_url }}" 
                   loop 
                   muted 
+                  autoplay
                   playsinline
                   preload="metadata"
                 ></video>
@@ -271,14 +272,10 @@
 
       if (isAutoRotate) {
         autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
-
-        // Pause auto-rotation when user hovers or interacts
-        wrapper.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
-        wrapper.addEventListener('mouseleave', () => resetAutoRotate());
       }
     };
 
-    // Auto-play videos on hover & Handle Mute state
+    // Auto-play videos & Handle Mute state
     const handleVideoInteractions = () => {
       const videos = document.querySelectorAll('.reel-video');
       
@@ -286,16 +283,10 @@
         const parent = video.closest('.reel-video-container');
         const muteBtn = parent.querySelector('.reel-mute-btn');
 
-        // Play on Hover/Interaction
-        parent.addEventListener('mouseenter', () => {
-          video.play().catch(() => {});
-        });
+        // Play video initially (fallback for browsers blocking native autoplay)
+        video.play().catch(() => {});
 
-        parent.addEventListener('mouseleave', () => {
-          video.pause();
-        });
-
-        // Touch trigger for mobile
+        // Touch trigger for mobile play/pause
         parent.addEventListener('click', (e) => {
           if (e.target.closest('.reel-mute-btn')) return; // let mute btn click pass through
           if (video.paused) {
