@@ -4,22 +4,30 @@
   Each reel features a linked product card positioned below or overlaid on the video slide.
 {%- endcomment -%}
 
+{%- liquid
+  assign font_size = section.settings.font_size
+  assign heading_alignment = section.settings.heading_alignment
+  assign text_transform = section.settings.text_transform
+  assign auto_rotate = section.settings.auto_rotate
+  assign auto_rotate_speed = section.settings.auto_rotate_speed | times: 1000
+-%}
+
 <style>
-.shoppable-reels-section {
+.shoppable-reels-section-{{ section.id }} {
   background-color: var(--color-background);
   color: var(--color-foreground);
   padding: 48px 0;
 }
-.reels-header {
-  text-align: center;
+.reels-header-{{ section.id }} {
+  text-align: {{ heading_alignment }};
   margin-bottom: 32px;
 }
-.reels-title {
-  font-size: 24px;
+.reels-title-{{ section.id }} {
+  font-size: {{ font_size }}px;
   font-weight: 500;
   letter-spacing: normal;
   margin: 0;
-  text-transform: none;
+  text-transform: {{ text_transform }};
   color: var(--color-foreground);
 }
 .reels-carousel-wrapper {
@@ -37,6 +45,9 @@
 }
 .reels-grid-scroll::-webkit-scrollbar {
   display: none;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 .reel-slide-card {
   flex: 0 0 calc(20% - 16px);
@@ -142,11 +153,11 @@
 }
 </style>
 
-<div class="shoppable-reels-section">
+<div class="shoppable-reels-section-{{ section.id }}">
   <div class="page-width">
     {%- if section.settings.title != blank -%}
-      <div class="reels-header">
-        <h2 class="reels-title">{{ section.settings.title }}</h2>
+      <div class="reels-header-{{ section.id }}">
+        <h2 class="reels-title-{{ section.id }}">{{ section.settings.title }}</h2>
       </div>
     {%- endif -%}
 
@@ -239,17 +250,23 @@
         }
       };
 
-      // Auto rotation interval (every 4 seconds)
-      let autoRotateInterval = setInterval(handleNextScroll, 4000);
+      // Check if auto rotation is enabled
+      const isAutoRotate = {{ auto_rotate | json }};
+      const autoRotateSpeed = {{ auto_rotate_speed | json }};
+      let autoRotateInterval;
 
-      const resetAutoRotate = () => {
-        clearInterval(autoRotateInterval);
-        autoRotateInterval = setInterval(handleNextScroll, 4000);
-      };
+      if (isAutoRotate) {
+        autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
 
-      // Pause auto-rotation when user hovers or interacts
-      wrapper.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
-      wrapper.addEventListener('mouseleave', () => resetAutoRotate());
+        const resetAutoRotate = () => {
+          clearInterval(autoRotateInterval);
+          autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
+        };
+
+        // Pause auto-rotation when user hovers or interacts
+        wrapper.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
+        wrapper.addEventListener('mouseleave', () => resetAutoRotate());
+      }
     };
 
     // Auto-play videos on hover & Handle Mute state
@@ -328,6 +345,75 @@
       "id": "title",
       "label": "Heading",
       "default": "Shop the Collection Live"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Heading Font Size",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Heading Case",
+      "options": [
+        {
+          "value": "none",
+          "label": "As written"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Auto Rotation Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Enable Auto Rotation",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "auto_rotate_speed",
+      "label": "Rotation Speed (Seconds)",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
     }
   ],
   "blocks": [
