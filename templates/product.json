@@ -271,7 +271,7 @@
                     "text_N3mWKV": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>",
+                        "text": "<p>We process and dispatch all orders within 24 hours of confirmation. Once shipped, your order will typically be delivered within 3\u20135 business days, depending on your location. You\u2019ll receive a tracking link as soon as your order is on its way. \ud83d\ude9a\ud83d\udce6</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
