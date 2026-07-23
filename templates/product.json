@@ -262,42 +262,6 @@
                     "text_desc_inner"
                   ]
                 },
-                "tab_fabric": {
-                  "type": "_tab",
-                  "settings": {
-                    "title": "Fabric"
-                  },
-                  "blocks": {
-                    "text_pJ3ixt": {
-                      "type": "text",
-                      "settings": {
-                        "text": "<p>Our products are manufactured both locally and globally. We carefully select our manufacturing partners to ensure our products are high quality and a fair value.</p>",
-                        "width": "100%",
-                        "max_width": "normal",
-                        "alignment": "left",
-                        "type_preset": "rte",
-                        "font": "var(--font-body--family)",
-                        "font_size": "1rem",
-                        "line_height": "normal",
-                        "letter_spacing": "normal",
-                        "case": "none",
-                        "wrap": "pretty",
-                        "color": "var(--color-foreground)",
-                        "background": false,
-                        "background_color": "#00000026",
-                        "corner_radius": 0,
-                        "padding-block-start": 0,
-                        "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": [
-                    "text_pJ3ixt"
-                  ]
-                },
                 "tab_delivery": {
                   "type": "_tab",
                   "settings": {
@@ -373,7 +337,6 @@
               },
               "block_order": [
                 "tab_description",
-                "tab_fabric",
                 "tab_delivery",
                 "tab_returns"
               ]
