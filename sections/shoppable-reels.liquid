@@ -33,7 +33,7 @@
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 10px 4px 24px;
+  padding: 10px 4px 10px;
 }
 .reels-grid-scroll::-webkit-scrollbar {
   display: none;
@@ -211,7 +211,7 @@
 
 <script>
   (() => {
-    // Scroll handling for nav buttons
+    // Scroll handling for nav buttons and auto-rotation
     const initCarousel = (wrapper) => {
       const track = wrapper.querySelector('.reels-track');
       const prev = wrapper.querySelector('.reels-nav-prev');
@@ -222,11 +222,34 @@
 
       prev.addEventListener('click', () => {
         track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        resetAutoRotate();
       });
 
       next.addEventListener('click', () => {
-        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        handleNextScroll();
+        resetAutoRotate();
       });
+
+      const handleNextScroll = () => {
+        // If we reached the end, scroll back to the start
+        if (Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollHeight || Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollWidth) {
+          track.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      };
+
+      // Auto rotation interval (every 4 seconds)
+      let autoRotateInterval = setInterval(handleNextScroll, 4000);
+
+      const resetAutoRotate = () => {
+        clearInterval(autoRotateInterval);
+        autoRotateInterval = setInterval(handleNextScroll, 4000);
+      };
+
+      // Pause auto-rotation when user hovers or interacts
+      wrapper.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
+      wrapper.addEventListener('mouseleave', () => resetAutoRotate());
     };
 
     // Auto-play videos on hover & Handle Mute state
