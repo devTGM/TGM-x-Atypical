@@ -935,13 +935,45 @@
             "video_url": "https://cdn.shopify.com/videos/c/o/v/28cef17cd8a842b6878f5244af043715.mp4",
             "product": ""
           }
+        },
+        "reel_qaAERp": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/300a86180f1547fabfd56d4132ce4c9e.mp4",
+            "product": ""
+          }
+        },
+        "reel_mnWJRM": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/d3c643340fee43619242a1328dc56a84.mov",
+            "product": ""
+          }
+        },
+        "reel_rAtmwB": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/b1467e5c22344ddeaf5b21cf9c3b3fe7.mov",
+            "product": ""
+          }
+        },
+        "reel_6BmQmm": {
+          "type": "reel",
+          "settings": {
+            "video_url": "",
+            "product": ""
+          }
         }
       },
       "block_order": [
         "reel_1",
         "reel_2",
         "reel_3",
-        "reel_4"
+        "reel_4",
+        "reel_qaAERp",
+        "reel_mnWJRM",
+        "reel_rAtmwB",
+        "reel_6BmQmm"
       ],
       "settings": {
         "title": "Shop the Collection Live"
