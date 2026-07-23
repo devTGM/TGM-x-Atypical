@@ -83,7 +83,7 @@
               </span>
               {%- assign option_name_downcased = product_option.name | downcase -%}
               {%- if option_name_downcased == 'size' -%}
-                <button type="button" class="unstyled-button link" style="text-decoration: underline; font-size: var(--font-size--sm); text-transform: capitalize; letter-spacing: normal; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: #000;" on:click="#size-guide-modal-{{ product_resource.id }}/showDialog">
+                <button type="button" class="unstyled-button link" style="border: none !important; background: none !important; padding: 0 !important; text-decoration: underline; font-size: var(--font-size--sm); text-transform: capitalize; letter-spacing: normal; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: #000; box-shadow: none !important; min-height: auto !important; height: auto !important;" on:click="#size-guide-modal-{{ product_resource.id }}/showDialog">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21.3 8.25a2.25 2.25 0 0 0-3-3l-13.5 13.5a2.25 2.25 0 0 0 3 3l13.5-13.5z"/>
                     <path d="M12 9l1.5 1.5M9 12l1.5 1.5M6 15l1.5 1.5M15 6l1.5 1.5"/>
