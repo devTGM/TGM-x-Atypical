@@ -1,0 +1,341 @@
+{%- comment -%}
+  Shoppable Reels Section
+  Renders a video slider carousel where each slide contains a Shoppable Reel (MP4 video).
+  Each reel features a linked product card positioned below or overlaid on the video slide.
+{%- endcomment -%}
+
+<style>
+.shoppable-reels-section {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  padding: 48px 0;
+}
+.reels-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.reels-title {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: normal;
+  margin: 0;
+  text-transform: none;
+  color: var(--color-foreground);
+}
+.reels-carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+.reels-grid-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 4px 24px;
+}
+.reels-grid-scroll::-webkit-scrollbar {
+  display: none;
+}
+.reel-slide-card {
+  flex: 0 0 calc(20% - 16px);
+  min-width: 250px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+.reel-video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9/16;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #000;
+  box-shadow: 0 4px 12px rgba(var(--color-foreground-rgb), 0.08);
+}
+.reel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.reel-mute-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+.reel-product-card {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--color-foreground);
+}
+.reel-product-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--color-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reel-product-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-foreground);
+  margin: 0;
+}
+.reels-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s, background-color 0.2s;
+}
+.reels-nav-btn:hover {
+  background-color: var(--color-selected-variant-background, #000);
+  color: var(--color-selected-variant-text, #fff);
+  transform: translateY(-50%) scale(1.05);
+}
+.reels-nav-prev {
+  left: 12px;
+}
+.reels-nav-next {
+  right: 12px;
+}
+
+@media (max-width: 768px) {
+  .reel-slide-card {
+    flex: 0 0 calc(50% - 10px);
+    min-width: 170px;
+  }
+  .reels-nav-btn {
+    display: none;
+  }
+}
+</style>
+
+<div class="shoppable-reels-section">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="reels-header">
+        <h2 class="reels-title">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="reels-carousel-wrapper" id="reels-{{ section.id }}">
+      <button class="reels-nav-btn reels-nav-prev" aria-label="Previous Slide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="reels-grid-scroll reels-track">
+        {%- for block in section.blocks -%}
+          {%- assign product = block.settings.product -%}
+          <div class="reel-slide-card" {{ block.shopify_attributes }}>
+            <div class="reel-video-container">
+              {%- if block.settings.video_url != blank -%}
+                <video 
+                  class="reel-video" 
+                  src="{{ block.settings.video_url }}" 
+                  loop 
+                  muted 
+                  playsinline
+                  preload="metadata"
+                ></video>
+                <button class="reel-mute-btn" aria-label="Mute Video">
+                  <svg class="mute-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                  </svg>
+                </button>
+              {%- else -%}
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444; color:#fff; font-size:12px;">
+                  No Video Linked
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- if product != blank -%}
+              <a href="{{ product.url }}" class="reel-product-card">
+                <h4 class="reel-product-title">{{ product.title }}</h4>
+                <p class="reel-product-price">{{ product.price | money }}</p>
+              </a>
+            {%- else -%}
+              <div class="reel-product-card">
+                <h4 class="reel-product-title">Sample Product</h4>
+                <p class="reel-product-price">Rs. 2,999</p>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <button class="reels-nav-btn reels-nav-next" aria-label="Next Slide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    // Scroll handling for nav buttons
+    const initCarousel = (wrapper) => {
+      const track = wrapper.querySelector('.reels-track');
+      const prev = wrapper.querySelector('.reels-nav-prev');
+      const next = wrapper.querySelector('.reels-nav-next');
+      if (!track || !prev || !next) return;
+
+      const scrollAmount = 270; // Approximation of column width + gap
+
+      prev.addEventListener('click', () => {
+        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+
+      next.addEventListener('click', () => {
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    };
+
+    // Auto-play videos on hover & Handle Mute state
+    const handleVideoInteractions = () => {
+      const videos = document.querySelectorAll('.reel-video');
+      
+      videos.forEach((video) => {
+        const parent = video.closest('.reel-video-container');
+        const muteBtn = parent.querySelector('.reel-mute-btn');
+
+        // Play on Hover/Interaction
+        parent.addEventListener('mouseenter', () => {
+          video.play().catch(() => {});
+        });
+
+        parent.addEventListener('mouseleave', () => {
+          video.pause();
+        });
+
+        // Touch trigger for mobile
+        parent.addEventListener('click', (e) => {
+          if (e.target.closest('.reel-mute-btn')) return; // let mute btn click pass through
+          if (video.paused) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+
+        // Handle Mute Button toggle
+        if (muteBtn) {
+          muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            video.muted = !video.muted;
+            
+            // Toggle icon
+            if (video.muted) {
+              muteBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <line x1="23" y1="9" x2="17" y2="15"></line>
+                  <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+              `;
+            } else {
+              muteBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              `;
+            }
+          });
+        }
+      });
+    };
+
+    // Init all carousels on page load
+    document.querySelectorAll('.reels-carousel-wrapper').forEach(initCarousel);
+    handleVideoInteractions();
+
+    // Document listeners to re-trigger on customizer events
+    document.addEventListener('shopify:section:load', () => {
+      document.querySelectorAll('.reels-carousel-wrapper').forEach(initCarousel);
+      handleVideoInteractions();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Shoppable Reels",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop the Collection Live"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Shoppable Reel",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video_url",
+          "label": "Video MP4 URL",
+          "info": "Upload an MP4 under Content > Files and paste the URL here."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Featured Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shoppable Reels",
+      "blocks": [
+        { "type": "reel" },
+        { "type": "reel" },
+        { "type": "reel" },
+        { "type": "reel" }
+      ]
+    }
+  ]
+}
+{% endschema %}

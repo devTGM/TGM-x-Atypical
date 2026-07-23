@@ -117,7 +117,7 @@
         "text_cdetxd": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>• PREMIUM STREETWEAR </strong></p>",
+            "text": "<p><strong>\u2022 PREMIUM STREETWEAR </strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -142,7 +142,7 @@
         "text_czVDM3": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>• FREE SHIPPING ABOVE ₹999 </strong></p>",
+            "text": "<p><strong>\u2022 FREE SHIPPING ABOVE \u20b9999 </strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -167,7 +167,7 @@
         "text_xMGNNg": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>• EASY EXCHANGES </strong></p>",
+            "text": "<p><strong>\u2022 EASY EXCHANGES </strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -192,7 +192,7 @@
         "text_P7LJWD": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>• MADE IN INDIA </strong></p>",
+            "text": "<p><strong>\u2022 MADE IN INDIA </strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -217,7 +217,7 @@
         "text_TEeRWN": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>• LIMITED DROPS</strong></p>",
+            "text": "<p><strong>\u2022 LIMITED DROPS</strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -1710,7 +1710,7 @@
         "text_LeWzwV": {
           "type": "text",
           "settings": {
-            "text": "<p>Not mass made, not rushed — every piece is carefully created for people who appreciate real craftsmanship.</p>",
+            "text": "<p>Not mass made, not rushed \u2014 every piece is carefully created for people who appreciate real craftsmanship.</p>",
             "width": "100%",
             "max_width": "narrow",
             "alignment": "center",
@@ -1779,6 +1779,62 @@
         "padding-block-start": 16,
         "padding-block-end": 16
       }
+    },
+    "shoppable_reels_main": {
+      "type": "shoppable-reels",
+      "settings": {
+        "title": "Shop the Collection Live"
+      },
+      "blocks": {
+        "reel_1": {
+          "type": "reel",
+          "settings": {
+            "video_url": "",
+            "product": ""
+          }
+        },
+        "reel_2": {
+          "type": "reel",
+          "settings": {
+            "video_url": "",
+            "product": ""
+          }
+        },
+        "reel_3": {
+          "type": "reel",
+          "settings": {
+            "video_url": "",
+            "product": ""
+          }
+        },
+        "reel_4": {
+          "type": "reel",
+          "settings": {
+            "video_url": "",
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "reel_1",
+        "reel_2",
+        "reel_3",
+        "reel_4"
+      ]
+    },
+    "divider_reels": {
+      "type": "divider",
+      "name": "Divider",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "section_width": "full-width",
+        "thickness": 3,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
     }
   },
   "order": [
@@ -1800,6 +1856,8 @@
     "product_list_rMp3Ji",
     "marquee_JJLdMx",
     "section_7EfWPQ",
+    "shoppable_reels_main",
+    "divider_reels",
     "divider_R6QEyR"
   ]
 }
