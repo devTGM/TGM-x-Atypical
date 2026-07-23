@@ -24,7 +24,7 @@
 }
 .reels-title-{{ section.id }} {
   font-size: {{ font_size }}px;
-  font-weight: 500;
+  font-weight: 700 !important;
   letter-spacing: normal;
   margin: 0;
   text-transform: {{ text_transform }};
@@ -41,7 +41,7 @@
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 10px 4px 10px;
+  padding: 10px 24px 10px;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
 }
@@ -152,6 +152,9 @@
   .reels-nav-btn {
     display: none;
   }
+  .reels-grid-scroll {
+    padding: 10px 16px 10px;
+  }
 }
 </style>
 
@@ -231,24 +234,27 @@
       const next = wrapper.querySelector('.reels-nav-next');
       if (!track || !prev || !next) return;
 
-      const scrollAmount = 270; // Approximation of column width + gap
+      const getScrollAmount = () => {
+        const firstCard = track.querySelector('.reel-slide-card');
+        return firstCard ? firstCard.clientWidth + 20 : 270;
+      };
 
       prev.addEventListener('click', () => {
-        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        resetAutoRotate();
+        track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+        if (typeof resetAutoRotate === 'function') resetAutoRotate();
       });
 
       next.addEventListener('click', () => {
         handleNextScroll();
-        resetAutoRotate();
+        if (typeof resetAutoRotate === 'function') resetAutoRotate();
       });
 
       const handleNextScroll = () => {
-        // If we reached the end, scroll back to the start
-        if (Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollHeight || Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollWidth) {
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        if (Math.ceil(track.scrollLeft) >= maxScroll - 10) {
           track.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
-          track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
         }
       };
 
@@ -257,13 +263,14 @@
       const autoRotateSpeed = {{ auto_rotate_speed | json }};
       let autoRotateInterval;
 
+      const resetAutoRotate = () => {
+        if (!isAutoRotate) return;
+        clearInterval(autoRotateInterval);
+        autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
+      };
+
       if (isAutoRotate) {
         autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
-
-        const resetAutoRotate = () => {
-          clearInterval(autoRotateInterval);
-          autoRotateInterval = setInterval(handleNextScroll, autoRotateSpeed);
-        };
 
         // Pause auto-rotation when user hovers or interacts
         wrapper.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
