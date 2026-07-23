@@ -15,6 +15,7 @@
         "text_YLPk4p": {
           "type": "text",
           "name": "t:names.heading",
+          "disabled": true,
           "settings": {
             "text": "<p>SEASON 26</p>",
             "width": "fit-content",
@@ -61,8 +62,10 @@
       "name": "Hero Banner",
       "settings": {
         "media_type_1": "image",
-        "desktop_image_1": "shopify://shop_images/IMG-5649.png",
-        "media_type_2": "none",
+        "desktop_image_1": "shopify://shop_images/ATC_Desktop.png",
+        "mobile_image_1": "shopify://shop_images/ATC.png",
+        "media_type_2": "image",
+        "desktop_image_2": "shopify://shop_images/IMG-5649.png",
         "media_type_3": "none",
         "media_type_4": "none",
         "media_type_5": "none",
@@ -557,17 +560,6 @@
         "auto_rotate_speed": 3
       }
     },
-    "custom_liquid_gfhkEA": {
-      "type": "custom-liquid",
-      "name": "t:names.custom_liquid",
-      "settings": {
-        "custom_liquid": "<style>\nvideo {\nwidth: 100%;\nheight: auto;\ndisplay: block;\nmargin: 0 auto;\n}\n</style>\n<video muted autoplay playsinline loop>\n    <source src=\"/media/cc0-videos/flower.webm\"\n                  type=\"video/mp4\">\n    <source src=\"https://cdn.shopify.com/videos/c/o/v/e573abce19f74edda85f6e0c2e4628df.mp4\"\n                  type=\"video/mp4\">\n</video>",
-        "color_scheme": "",
-        "section_width": "full-width",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
     "divider_kDnCLa": {
       "type": "divider",
       "name": "t:names.divider_section",
@@ -982,6 +974,17 @@
         "color_scheme": "scheme-1",
         "padding-block-start": 30,
         "padding-block-end": 30
+      }
+    },
+    "custom_liquid_gfhkEA": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "<style>\nvideo {\nwidth: 100%;\nheight: auto;\ndisplay: block;\nmargin: 0 auto;\n}\n</style>\n<video muted autoplay playsinline loop>\n    <source src=\"/media/cc0-videos/flower.webm\"\n                  type=\"video/mp4\">\n    <source src=\"https://cdn.shopify.com/videos/c/o/v/e573abce19f74edda85f6e0c2e4628df.mp4\"\n                  type=\"video/mp4\">\n</video>",
+        "color_scheme": "",
+        "section_width": "full-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "product_list_Yp6nUa": {
