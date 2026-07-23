@@ -280,6 +280,13 @@
     min-height: calc(var(--hero-banner-min-height, 70svh) - var(--hero-banner-height-offset));
   }
 
+  @media screen and (max-width: 749px) {
+    .hero-banner {
+      min-height: 100svh !important;
+      height: 100svh !important;
+    }
+  }
+
   .hero-banner[data-shopify-visual-preview] {
     --hero-banner-min-height: 600px;
     min-height: 600px;
