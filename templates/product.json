@@ -271,7 +271,7 @@
                     "text_N3mWKV": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>We process and dispatch all orders within 24 hours of confirmation. Once shipped, your order will typically be delivered within 3\u20135 business days, depending on your location. You\u2019ll receive a tracking link as soon as your order is on its way. \ud83d\ude9a\ud83d\udce6</p>",
+                        "text": "<p>We process and dispatch all orders within 24 hours of confirmation. Once shipped, your order will typically be delivered within 3–5 business days, depending on your location. You’ll receive a tracking link as soon as your order is on its way. 🚚📦</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
@@ -301,13 +301,13 @@
                 "tab_returns": {
                   "type": "_tab",
                   "settings": {
-                    "title": "Returns & Exchange"
+                    "title": "Exchanges"
                   },
                   "blocks": {
                     "text_JdPa9J": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Not the perfect fit? We\u2019ve got you covered. Enjoy easy exchanges for both size changes and product swaps. Simply raise an exchange request within the eligible period, and we\u2019ll help you get the right fit or style with a smooth, hassle-free process. \ud83d\udd04</p>",
+                        "text": "<p>Not the perfect fit? We’ve got you covered. Enjoy easy exchanges for both size changes and product swaps. Simply raise an exchange request within the eligible period, and we’ll help you get the right fit or style with a smooth, hassle-free process. 🔄</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
