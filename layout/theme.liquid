@@ -6,10 +6,12 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {% comment %}
     <!-- FlexyPe -->
    <script src="https://static.flexype.in/scripts/flexype-v2.min.js" type="module" defer></script>
    {%- render 'flexype-checkout' -%}
 <!-- FlexyPe -->
+    {% endcomment %}
 
     {%- if settings.favicon != blank -%}
       <link
