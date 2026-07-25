@@ -31,7 +31,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "10% OFF ON PREPAID ORDERS",
+            "text": "<strong>5% OFF ON PREPAID ORDERS</strong>",
             "link": "",
             "font": "var(--font-heading--family)",
             "font_size": "",
