@@ -519,7 +519,7 @@
         "reel_rAtmwB": {
           "type": "reel",
           "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/ea80c577f30f4920b389632634f6c4ac.mp4",
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/44a5cdad939c41e185cdbf3ef5153e0d.mp4",
             "product": "midnight-blossom-tee"
           }
         },
@@ -529,13 +529,6 @@
             "video_url": "https://cdn.shopify.com/videos/c/o/v/28cef17cd8a842b6878f5244af043715.mp4",
             "product": "retro-recall"
           }
-        },
-        "reel_mnWJRM": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/d3c643340fee43619242a1328dc56a84.mov",
-            "product": "any-means-possible"
-          }
         }
       },
       "block_order": [
@@ -543,8 +536,7 @@
         "reel_2",
         "reel_3",
         "reel_rAtmwB",
-        "reel_4",
-        "reel_mnWJRM"
+        "reel_4"
       ],
       "settings": {
         "title": "Shop the Collection Live",
