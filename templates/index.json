@@ -498,57 +498,43 @@
         "reel_1": {
           "type": "reel",
           "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/68f5bf21530b4eb0b3626f3d81741ef1.mov",
-            "product": ""
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/73a20645a7fd40b0bfe51063b243e80e.mov",
+            "product": "heaven-s-wing-embroidered-tshirt-pre-order"
           }
         },
         "reel_2": {
           "type": "reel",
           "settings": {
             "video_url": "https://cdn.shopify.com/videos/c/o/v/f90eed5d165f4c948839dec1d87b43cb.mov",
-            "product": ""
+            "product": "backcountry-clasp"
           }
         },
         "reel_3": {
           "type": "reel",
           "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/0b131c0944444cfebad9301a37327a50.mp4",
-            "product": ""
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/131792b1c20f407883aa0111dbe0e7a6.mov",
+            "product": "celestial-rise"
+          }
+        },
+        "reel_rAtmwB": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/ea80c577f30f4920b389632634f6c4ac.mp4",
+            "product": "midnight-blossom-tee"
           }
         },
         "reel_4": {
           "type": "reel",
           "settings": {
             "video_url": "https://cdn.shopify.com/videos/c/o/v/28cef17cd8a842b6878f5244af043715.mp4",
-            "product": ""
-          }
-        },
-        "reel_qaAERp": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/300a86180f1547fabfd56d4132ce4c9e.mp4",
-            "product": ""
+            "product": "retro-recall"
           }
         },
         "reel_mnWJRM": {
           "type": "reel",
           "settings": {
             "video_url": "https://cdn.shopify.com/videos/c/o/v/d3c643340fee43619242a1328dc56a84.mov",
-            "product": ""
-          }
-        },
-        "reel_rAtmwB": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/b1467e5c22344ddeaf5b21cf9c3b3fe7.mov",
-            "product": ""
-          }
-        },
-        "reel_6BmQmm": {
-          "type": "reel",
-          "settings": {
-            "video_url": "https://cdn.shopify.com/videos/c/o/v/d966d56f9a6043cbb3bcfec8ea9f6a8e.mp4",
-            "product": ""
+            "product": "any-means-possible"
           }
         }
       },
@@ -556,11 +542,9 @@
         "reel_1",
         "reel_2",
         "reel_3",
-        "reel_4",
-        "reel_qaAERp",
-        "reel_mnWJRM",
         "reel_rAtmwB",
-        "reel_6BmQmm"
+        "reel_4",
+        "reel_mnWJRM"
       ],
       "settings": {
         "title": "Shop the Collection Live",
