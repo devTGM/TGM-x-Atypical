@@ -12,7 +12,7 @@
 {%- enddoc -%}
 
 {% liquid
-  assign product = closest.product
+  assign product = closest.product | default: product
   if request.visual_preview_mode and product == blank
     assign product = collections.all.products.first
   endif

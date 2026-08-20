@@ -290,6 +290,7 @@
           {% content_for 'block',
             type: 'add-to-cart',
             id: 'add-to-cart',
+            closest.product: product,
             can_add_to_cart: can_add_to_cart,
             add_to_cart_text: add_to_cart_text
           %}
@@ -297,6 +298,7 @@
           {% content_for 'block',
             type: 'accelerated-checkout',
             id: 'accelerated-checkout',
+            closest.product: product,
             can_add_to_cart: can_add_to_cart,
             form_obj: form
           %}
