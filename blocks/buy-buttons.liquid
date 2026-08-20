@@ -6,7 +6,7 @@
     assign product = collections.all.products.first
   endif
 
-  assign variant = closest.product.selected_or_first_available_variant
+  assign variant = product.selected_or_first_available_variant
   assign inventory_quantity = variant.inventory_quantity
   assign inventory_policy = variant.inventory_policy
 
