@@ -134,6 +134,7 @@
         <div class="cart-drawer__items">
           {% render 'cart-products', force_empty: true %}
         </div>
+        {% render 'cart-drawer-cross-sell' %}
       </div>
     {% endcapture %}
 
@@ -212,6 +213,8 @@
                 >
                   {% render 'cart-products', drawer_context: 'drawer' %}
                 </scroll-hint>
+
+                {% render 'cart-drawer-cross-sell' %}
 
                 <div
                   class="cart-drawer__summary"

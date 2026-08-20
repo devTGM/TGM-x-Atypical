@@ -1,0 +1,424 @@
+{%- doc -%}
+  Renders cross-sell products (Knitwear & Waffle Tees) inside the cart drawer.
+{%- enddoc -%}
+
+{%- liquid
+  assign cross_sell_products = '' | split: ''
+  assign waffle_knits_col = collections['waffle-knits']
+  assign waffle_henley_col = collections['waffle-henley']
+  assign knitwear_col = collections['knitwear'] | default: collections['knits']
+
+  # Collect cart product IDs to prevent recommending what is already in the cart
+  assign cart_product_ids = ''
+  for item in cart.items
+    assign cart_product_ids = cart_product_ids | append: item.product_id | append: ','
+  endfor
+
+  # 1. Grab from waffle-knits
+  if waffle_knits_col != blank and waffle_knits_col.products.size > 0
+    for p in waffle_knits_col.products
+      unless cart_product_ids contains p.id
+        if p.available
+          assign p_arr = p | sort
+          assign cross_sell_products = cross_sell_products | concat: p_arr
+          if cross_sell_products.size >= 2
+            break
+          endif
+        endif
+      endunless
+    endfor
+  endif
+
+  # 2. Grab from waffle-henley if needed
+  if cross_sell_products.size < 2 and waffle_henley_col != blank and waffle_henley_col.products.size > 0
+    for p in waffle_henley_col.products
+      unless cart_product_ids contains p.id
+        assign is_already_added = false
+        for existing in cross_sell_products
+          if existing.id == p.id
+            assign is_already_added = true
+            break
+          endif
+        endfor
+        unless is_already_added
+          if p.available
+            assign p_arr = p | sort
+            assign cross_sell_products = cross_sell_products | concat: p_arr
+            if cross_sell_products.size >= 2
+              break
+            endif
+          endif
+        endunless
+      endunless
+    endfor
+  endif
+
+  # 3. Grab from knitwear if needed
+  if cross_sell_products.size < 2 and knitwear_col != blank and knitwear_col.products.size > 0
+    for p in knitwear_col.products
+      unless cart_product_ids contains p.id
+        assign is_already_added = false
+        for existing in cross_sell_products
+          if existing.id == p.id
+            assign is_already_added = true
+            break
+          endif
+        endfor
+        unless is_already_added
+          if p.available
+            assign p_arr = p | sort
+            assign cross_sell_products = cross_sell_products | concat: p_arr
+            if cross_sell_products.size >= 2
+              break
+            endif
+          endif
+        endunless
+      endunless
+    endfor
+  endif
+
+  # 4. Fallback: Search all collections for Waffle or Knit
+  if cross_sell_products.size < 2
+    for c in collections
+      assign ch = c.handle | downcase
+      if ch contains 'waffle' or ch contains 'knit'
+        for p in c.products
+          unless cart_product_ids contains p.id
+            assign is_already_added = false
+            for existing in cross_sell_products
+              if existing.id == p.id
+                assign is_already_added = true
+                break
+              endif
+            endfor
+            unless is_already_added
+              if p.available
+                assign p_arr = p | sort
+                assign cross_sell_products = cross_sell_products | concat: p_arr
+                if cross_sell_products.size >= 2
+                  break
+                endif
+              endif
+            endunless
+          endunless
+        endfor
+      endif
+      if cross_sell_products.size >= 2
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if cross_sell_products.size > 0 -%}
+  <div class="cart-drawer-cross-sell">
+    <div class="cart-drawer-cross-sell__header">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <span>PAIRS WELL WITH</span>
+    </div>
+    <div class="cart-drawer-cross-sell__list">
+      {%- for product in cross_sell_products limit: 2 -%}
+        {%- assign first_variant = product.selected_or_first_available_variant | default: product.first_available_variant | default: product.variants.first -%}
+        <div class="cart-drawer-cross-sell__card" data-product-id="{{ product.id }}">
+          <a href="{{ product.url }}" class="cart-drawer-cross-sell__image">
+            <img
+              src="{{ product.featured_media | image_url: width: 120 }}"
+              alt="{{ product.title | escape }}"
+              loading="lazy"
+              width="50"
+              height="50"
+            >
+          </a>
+          <div class="cart-drawer-cross-sell__info">
+            <a href="{{ product.url }}" class="cart-drawer-cross-sell__title">
+              {{ product.title }}
+            </a>
+            <div class="cart-drawer-cross-sell__meta">
+              <span class="cart-drawer-cross-sell__price">{{ product.price | money }}</span>
+              {%- if product.compare_at_price > product.price -%}
+                <span class="cart-drawer-cross-sell__compare-price">{{ product.compare_at_price | money }}</span>
+              {%- endif -%}
+              {%- unless product.has_only_default_variant -%}
+                <select
+                  class="cart-drawer-cross-sell__select"
+                  aria-label="Select size for {{ product.title | escape }}"
+                  onchange="updateDrawerCrossSellVariant(this)"
+                >
+                  {%- for v in product.variants -%}
+                    <option value="{{ v.id }}" {% if v.id == first_variant.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                      {{ v.title }} {%- unless v.available %} (Out){% endunless -%}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              {%- endunless -%}
+            </div>
+          </div>
+          <button
+            type="button"
+            class="cart-drawer-cross-sell__btn"
+            data-variant-id="{{ first_variant.id }}"
+            onclick="addDrawerCrossSellToCart(this, '{{ first_variant.id }}')"
+            aria-label="Add {{ product.title | escape }} to cart"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            <span class="drawer-btn-text">{% if product.available %}+ ADD{% else %}SOLD OUT{% endif %}</span>
+          </button>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <style>
+    .cart-drawer-cross-sell {
+      margin: 12px 16px;
+      padding: 14px;
+      border: 1px solid var(--color-border, #e5e5e5);
+      border-radius: 12px;
+      background-color: var(--color-background, #fff);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+    .cart-drawer-cross-sell__header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-foreground, #000);
+      margin-bottom: 10px;
+    }
+    .cart-drawer-cross-sell__list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cart-drawer-cross-sell__card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--color-border, #eee);
+      border-radius: 8px;
+      background: var(--color-background, #fff);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .cart-drawer-cross-sell__card:hover {
+      border-color: rgba(var(--color-foreground-rgb, 0,0,0), 0.25);
+    }
+    .cart-drawer-cross-sell__image {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #f6f6f6;
+      border: 1px solid var(--color-border, #eee);
+      flex-shrink: 0;
+      display: block;
+    }
+    .cart-drawer-cross-sell__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cart-drawer-cross-sell__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .cart-drawer-cross-sell__title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-foreground, #000);
+      text-decoration: none;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+    .cart-drawer-cross-sell__title:hover {
+      text-decoration: underline;
+    }
+    .cart-drawer-cross-sell__meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .cart-drawer-cross-sell__price {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-foreground, #000);
+    }
+    .cart-drawer-cross-sell__compare-price {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--color-foreground-muted, #777);
+      text-decoration: line-through;
+    }
+    .cart-drawer-cross-sell__select {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--color-foreground, #000);
+      background: var(--color-background, #fff);
+      border: 1px solid var(--color-border, #ccc);
+      border-radius: 4px;
+      padding: 1px 4px;
+      cursor: pointer;
+      outline: none;
+      line-height: 1.2;
+    }
+    .cart-drawer-cross-sell__btn {
+      flex-shrink: 0;
+      background-color: var(--color-foreground, #000);
+      color: var(--color-background, #fff);
+      border: 1px solid var(--color-foreground, #000);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-drawer-cross-sell__btn:hover:not(:disabled) {
+      background-color: #2b2b2b;
+      border-color: #2b2b2b;
+    }
+    .cart-drawer-cross-sell__btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .cart-drawer-cross-sell__btn.added {
+      background-color: #108a00 !important;
+      border-color: #108a00 !important;
+      color: #fff !important;
+    }
+  </style>
+
+  <script>
+    if (typeof window.updateDrawerCrossSellVariant !== 'function') {
+      window.updateDrawerCrossSellVariant = function(select) {
+        const card = select.closest('.cart-drawer-cross-sell__card');
+        const btn = card ? card.querySelector('.cart-drawer-cross-sell__btn') : null;
+        if (btn) {
+          btn.dataset.variantId = select.value;
+        }
+      };
+    }
+
+    if (typeof window.addDrawerCrossSellToCart !== 'function') {
+      window.addDrawerCrossSellToCart = function(btn, fallbackVariantId) {
+        const card = btn.closest('.cart-drawer-cross-sell__card');
+        const select = card ? card.querySelector('.cart-drawer-cross-sell__select') : null;
+        const variantId = select ? select.value : (btn.dataset.variantId || fallbackVariantId);
+
+        if (!variantId || btn.disabled) return;
+        btn.disabled = true;
+        const textSpan = btn.querySelector('.drawer-btn-text');
+        if (textSpan) textSpan.textContent = '...';
+
+        const sectionIds = [];
+        document.querySelectorAll('cart-items-component').forEach(function(item) {
+          if (item.dataset.sectionId && !sectionIds.includes(item.dataset.sectionId)) {
+            sectionIds.push(item.dataset.sectionId);
+          }
+        });
+        document.querySelectorAll('cart-drawer-component').forEach(function(item) {
+          if (item.dataset.sectionId && !sectionIds.includes(item.dataset.sectionId)) {
+            sectionIds.push(item.dataset.sectionId);
+          }
+        });
+
+        const formData = new FormData();
+        formData.append('id', variantId);
+        formData.append('quantity', '1');
+        if (sectionIds.length > 0) {
+          formData.append('sections', sectionIds.join(','));
+          formData.append('sections_url', window.location.pathname);
+        }
+
+        const endpoint = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+          ? window.Shopify.routes.root + 'cart/add.js'
+          : '/cart/add.js';
+
+        fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        })
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(data) {
+          if (data.status) {
+            throw new Error(data.description || data.message || 'Error adding item');
+          }
+
+          if (textSpan) textSpan.textContent = '✓ ADDED';
+          btn.classList.add('added');
+
+          const eventDetail = {
+            resource: data,
+            sourceId: 'product-form-component',
+            data: {
+              source: 'product-form-component',
+              variantId: variantId.toString(),
+              itemCount: 1,
+              sections: data.sections || {}
+            }
+          };
+
+          document.dispatchEvent(new CustomEvent('cart:update', { bubbles: true, detail: eventDetail }));
+          document.dispatchEvent(new CustomEvent('cart:change', { bubbles: true, detail: eventDetail }));
+
+          if (data.sections) {
+            Object.keys(data.sections).forEach(function(sectionId) {
+              const sectionHtml = data.sections[sectionId];
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(sectionHtml, 'text/html');
+
+              const liveCartItems = document.querySelector('cart-items-component[data-section-id="' + sectionId + '"]');
+              const newCartItems = doc.querySelector('cart-items-component[data-section-id="' + sectionId + '"]') || doc.querySelector('cart-items-component');
+              if (liveCartItems && newCartItems) {
+                liveCartItems.innerHTML = newCartItems.innerHTML;
+              }
+            });
+          }
+
+          fetch((window.Shopify && window.Shopify.routes && window.Shopify.routes.root ? window.Shopify.routes.root : '/') + 'cart.js')
+            .then(function(r) { return r.json(); })
+            .then(function(cart) {
+              document.querySelectorAll('.cart-count, [data-cart-count], cart-icon span[ref="cartBubbleCount"]').forEach(function(el) {
+                el.textContent = cart.item_count;
+              });
+            })
+            .catch(function() {});
+
+          setTimeout(function() {
+            btn.disabled = false;
+            btn.classList.remove('added');
+            if (textSpan) textSpan.textContent = '+ ADD';
+          }, 2000);
+        })
+        .catch(function(err) {
+          console.error('Drawer cross-sell add error:', err);
+          if (textSpan) textSpan.textContent = '! ERROR';
+          setTimeout(function() {
+            btn.disabled = false;
+            btn.classList.remove('added');
+            if (textSpan) textSpan.textContent = '+ ADD';
+          }, 2000);
+        });
+      };
+    }
+  </script>
+{%- endif -%}
