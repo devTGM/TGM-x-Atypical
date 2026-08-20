@@ -26,6 +26,7 @@
 
 {% if section.settings.enable_sticky_add_to_cart %}
   {% liquid
+    assign product = closest.product
     assign current_variant = product.selected_or_first_available_variant
     # Get the initial quantity based on quantity rules
     assign initial_quantity = current_variant.quantity_rule.min | default: 1
