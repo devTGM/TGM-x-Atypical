@@ -21,7 +21,7 @@
     id: id,
     class: class,
     can_add_to_cart: can_add_to_cart,
-    product: closest.product,
+    product: closest.product | default: product,
     add_to_cart_text: add_to_cart_text,
     data_testid: 'standalone-add-to-cart'
   %}
