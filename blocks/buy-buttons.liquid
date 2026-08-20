@@ -65,10 +65,70 @@
         assign cross_sell_prod_2 = all_products[block_settings.pairs_well_2]
       endif
 
-      # 2. Custom collection from settings
-      assign target_collection = block_settings.cross_sell_collection
+      # 2. Discover Sweatpants collection from Settings, Navigation Menu, or Collections
+      assign sweatpants_collection = block_settings.cross_sell_collection
 
-      # 3. Dynamic category matching: Ringer Tees & Oversized Tshirts -> Sweatpants
+      if sweatpants_collection == blank or sweatpants_collection.products_count == 0
+        # Check main menu navigation
+        for link in linklists.main-menu.links
+          assign l_title = link.title | downcase
+          assign l_url = link.url | downcase
+          if l_title contains 'sweat' or l_url contains 'sweat' or l_title contains 'pant' or l_url contains 'pant'
+            if link.object != blank and link.object.products.size > 0
+              assign sweatpants_collection = link.object
+              break
+            endif
+          endif
+        endfor
+      endif
+
+      if sweatpants_collection == blank or sweatpants_collection.products_count == 0
+        # Check all linklists
+        for l_list in linklists
+          for link in l_list.links
+            assign l_title = link.title | downcase
+            assign l_url = link.url | downcase
+            if l_title contains 'sweat' or l_url contains 'sweat' or l_title contains 'pant' or l_url contains 'pant'
+              if link.object != blank and link.object.products.size > 0
+                assign sweatpants_collection = link.object
+                break
+              endif
+            endif
+          endfor
+          if sweatpants_collection != blank and sweatpants_collection.products.size > 0
+            break
+          endif
+        endfor
+      endif
+
+      if sweatpants_collection == blank or sweatpants_collection.products_count == 0
+        # Check collections list
+        for col in collections
+          assign c_h = col.handle | downcase
+          assign c_t = col.title | downcase
+          if c_h contains 'sweat' or c_t contains 'sweat' or c_h contains 'pant' or c_t contains 'pant'
+            if col.products.size > 0
+              assign sweatpants_collection = col
+              break
+            endif
+          endif
+        endfor
+      endif
+
+      if sweatpants_collection == blank or sweatpants_collection.products_count == 0
+        # Check direct handles
+        if collections['sweatpants'] != blank and collections['sweatpants'].products.size > 0
+          assign sweatpants_collection = collections['sweatpants']
+        elsif collections['sweat-pants'] != blank and collections['sweat-pants'].products.size > 0
+          assign sweatpants_collection = collections['sweat-pants']
+        elsif collections['sweatpant'] != blank and collections['sweatpant'].products.size > 0
+          assign sweatpants_collection = collections['sweatpant']
+        elsif collections['pants'] != blank and collections['pants'].products.size > 0
+          assign sweatpants_collection = collections['pants']
+        endif
+      endif
+
+      # 3. Detect if current product is a T-Shirt, Ringer Tee, Oversized Tee
       assign prod_title_downcase = product.title | downcase
       assign prod_type_downcase = product.type | downcase
       assign is_tshirt = false
@@ -83,39 +143,24 @@
         endif
       endfor
 
-      if target_collection == blank or target_collection.products_count == 0
-        if is_tshirt
-          if collections['sweatpants'] != blank and collections['sweatpants'].products.size > 0
-            assign target_collection = collections['sweatpants']
-          elsif collections['sweat-pants'] != blank and collections['sweat-pants'].products.size > 0
-            assign target_collection = collections['sweat-pants']
-          elsif collections['pants'] != blank and collections['pants'].products.size > 0
-            assign target_collection = collections['pants']
+      # 4. Assign Product 1
+      if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
+        if is_tshirt and sweatpants_collection != blank and sweatpants_collection.products.size > 0
+          for p in sweatpants_collection.products
+            if p.id != product.id and p.available
+              assign cross_sell_prod_1 = p
+              break
+            endif
+          endfor
+          if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
+            for p in sweatpants_collection.products
+              if p.id != product.id
+                assign cross_sell_prod_1 = p
+                break
+              endif
+            endfor
           endif
         endif
-      endif
-
-      # 4. Fill Product 1 if still blank
-      if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
-        if target_collection != blank and target_collection.products.size > 0
-          for p in target_collection.products
-            if p.id != product.id and p.available
-              assign cross_sell_prod_1 = p
-              break
-            endif
-          endfor
-        endif
-
-        if is_tshirt and (cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank)
-          for p in collections.all.products
-            assign p_title = p.title | downcase
-            assign p_type = p.type | downcase
-            if p.id != product.id and p.available and (p_title contains 'sweatpant' or p_title contains 'pant' or p_type contains 'sweatpant' or p_type contains 'pant')
-              assign cross_sell_prod_1 = p
-              break
-            endif
-          endfor
-        endif
 
         if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
           for p in product.collections.first.products
@@ -125,50 +170,29 @@
             endif
           endfor
         endif
-
-        if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
-          for p in collections.all.products
-            if p.id != product.id and p.available
-              assign cross_sell_prod_1 = p
-              break
-            endif
-          endfor
-        endif
       endif
 
-      # 5. Fill Product 2 if still blank
+      # 5. Assign Product 2
       if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
-        if target_collection != blank and target_collection.products.size > 0
-          for p in target_collection.products
+        if is_tshirt and sweatpants_collection != blank and sweatpants_collection.products.size > 0
+          for p in sweatpants_collection.products
             if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
               assign cross_sell_prod_2 = p
               break
             endif
           endfor
-        endif
-
-        if is_tshirt and (cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank)
-          for p in collections.all.products
-            assign p_title = p.title | downcase
-            assign p_type = p.type | downcase
-            if p.id != product.id and p.id != cross_sell_prod_1.id and p.available and (p_title contains 'sweatpant' or p_title contains 'pant' or p_type contains 'sweatpant' or p_type contains 'pant')
-              assign cross_sell_prod_2 = p
-              break
-            endif
-          endfor
+          if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
+            for p in sweatpants_collection.products
+              if p.id != product.id and p.id != cross_sell_prod_1.id
+                assign cross_sell_prod_2 = p
+                break
+              endif
+            endfor
+          endif
         endif
 
         if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
           for p in product.collections.first.products
-            if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
-              assign cross_sell_prod_2 = p
-              break
-            endif
-          endfor
-        endif
-
-        if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
-          for p in collections.all.products
             if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
               assign cross_sell_prod_2 = p
               break
