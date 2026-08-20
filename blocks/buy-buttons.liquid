@@ -202,6 +202,11 @@
       endif
     -%}
 
+    {%- liquid
+      assign cross_sell_v1 = cross_sell_prod_1.selected_or_first_available_variant | default: cross_sell_prod_1.first_available_variant | default: cross_sell_prod_1.variants.first
+      assign cross_sell_v2 = cross_sell_prod_2.selected_or_first_available_variant | default: cross_sell_prod_2.first_available_variant | default: cross_sell_prod_2.variants.first
+    -%}
+
     {%- if show_cross_sell and cross_sell_prod_1 != blank and cross_sell_prod_1.title != blank -%}
       <div class="atypical-cross-sell-wrapper">
         <div class="atypical-cross-sell-header">
@@ -220,20 +225,33 @@
                 <a href="{{ cross_sell_prod_1.url }}" class="atypical-cross-sell-title">
                   {{ cross_sell_prod_1.title }}
                 </a>
-                <div class="atypical-cross-sell-price">
-                  <span class="price-current">{{ cross_sell_prod_1.price | money }}</span>
-                  {%- if cross_sell_prod_1.compare_at_price > cross_sell_prod_1.price -%}
-                    <span class="price-compare">{{ cross_sell_prod_1.compare_at_price | money }}</span>
-                  {%- endif -%}
+                <div class="atypical-cross-sell-meta">
+                  <div class="atypical-cross-sell-price">
+                    <span class="price-current">{{ cross_sell_prod_1.price | money }}</span>
+                    {%- if cross_sell_prod_1.compare_at_price > cross_sell_prod_1.price -%}
+                      <span class="price-compare">{{ cross_sell_prod_1.compare_at_price | money }}</span>
+                    {%- endif -%}
+                  </div>
+                  {%- unless cross_sell_prod_1.has_only_default_variant -%}
+                    <select class="atypical-cross-sell-variant-select" aria-label="Select size for {{ cross_sell_prod_1.title | escape }}" onchange="updateCrossSellVariant(this)">
+                      {%- for v in cross_sell_prod_1.variants -%}
+                        <option value="{{ v.id }}" {% if v.id == cross_sell_v1.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                          {{ v.title }} {%- unless v.available %} (Sold out){% endunless -%}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                  {%- endunless -%}
                 </div>
               </div>
               <button
                 type="button"
                 class="atypical-cross-sell-btn"
-                onclick="addCrossSellToCart(this, '{{ cross_sell_prod_1.selected_or_first_available_variant.id }}')"
+                data-variant-id="{{ cross_sell_v1.id }}"
+                onclick="addCrossSellToCart(this, '{{ cross_sell_v1.id }}')"
                 aria-label="Add {{ cross_sell_prod_1.title | escape }} to cart"
+                {% unless cross_sell_prod_1.available %}disabled{% endunless %}
               >
-                <span class="btn-state-default">+ ADD</span>
+                <span class="btn-state-default">{% if cross_sell_prod_1.available %}+ ADD{% else %}SOLD OUT{% endif %}</span>
                 <span class="btn-state-success" style="display: none;">✓ ADDED</span>
               </button>
             </div>
@@ -248,20 +266,33 @@
                 <a href="{{ cross_sell_prod_2.url }}" class="atypical-cross-sell-title">
                   {{ cross_sell_prod_2.title }}
                 </a>
-                <div class="atypical-cross-sell-price">
-                  <span class="price-current">{{ cross_sell_prod_2.price | money }}</span>
-                  {%- if cross_sell_prod_2.compare_at_price > cross_sell_prod_2.price -%}
-                    <span class="price-compare">{{ cross_sell_prod_2.compare_at_price | money }}</span>
-                  {%- endif -%}
+                <div class="atypical-cross-sell-meta">
+                  <div class="atypical-cross-sell-price">
+                    <span class="price-current">{{ cross_sell_prod_2.price | money }}</span>
+                    {%- if cross_sell_prod_2.compare_at_price > cross_sell_prod_2.price -%}
+                      <span class="price-compare">{{ cross_sell_prod_2.compare_at_price | money }}</span>
+                    {%- endif -%}
+                  </div>
+                  {%- unless cross_sell_prod_2.has_only_default_variant -%}
+                    <select class="atypical-cross-sell-variant-select" aria-label="Select size for {{ cross_sell_prod_2.title | escape }}" onchange="updateCrossSellVariant(this)">
+                      {%- for v in cross_sell_prod_2.variants -%}
+                        <option value="{{ v.id }}" {% if v.id == cross_sell_v2.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                          {{ v.title }} {%- unless v.available %} (Sold out){% endunless -%}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                  {%- endunless -%}
                 </div>
               </div>
               <button
                 type="button"
                 class="atypical-cross-sell-btn"
-                onclick="addCrossSellToCart(this, '{{ cross_sell_prod_2.selected_or_first_available_variant.id }}')"
+                data-variant-id="{{ cross_sell_v2.id }}"
+                onclick="addCrossSellToCart(this, '{{ cross_sell_v2.id }}')"
                 aria-label="Add {{ cross_sell_prod_2.title | escape }} to cart"
+                {% unless cross_sell_prod_2.available %}disabled{% endunless %}
               >
-                <span class="btn-state-default">+ ADD</span>
+                <span class="btn-state-default">{% if cross_sell_prod_2.available %}+ ADD{% else %}SOLD OUT{% endif %}</span>
                 <span class="btn-state-success" style="display: none;">✓ ADDED</span>
               </button>
             </div>
@@ -349,6 +380,12 @@
         .atypical-cross-sell-title:hover {
           text-decoration: underline;
         }
+        .atypical-cross-sell-meta {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
         .atypical-cross-sell-price {
           display: flex;
           align-items: center;
@@ -362,6 +399,21 @@
           font-weight: 400;
           color: var(--color-foreground-muted);
           text-decoration: line-through;
+        }
+        .atypical-cross-sell-variant-select {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--color-foreground);
+          background-color: var(--color-background);
+          border: 1px solid var(--color-border);
+          border-radius: 6px;
+          padding: 2px 6px;
+          cursor: pointer;
+          outline: none;
+          line-height: 1.2;
+        }
+        .atypical-cross-sell-variant-select:focus {
+          border-color: var(--color-foreground);
         }
         .atypical-cross-sell-btn {
           flex-shrink: 0;
@@ -381,11 +433,15 @@
           align-items: center;
           justify-content: center;
         }
-        .atypical-cross-sell-btn:hover {
+        .atypical-cross-sell-btn:hover:not(:disabled) {
           background-color: #2b2b2b;
           border-color: #2b2b2b;
           transform: translateY(-1px);
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .atypical-cross-sell-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
         .atypical-cross-sell-btn.added {
           background-color: #108a00 !important;
@@ -395,49 +451,88 @@
       </style>
 
       <script>
+        if (typeof window.updateCrossSellVariant !== 'function') {
+          window.updateCrossSellVariant = function(select) {
+            const card = select.closest('.atypical-cross-sell-card');
+            const btn = card ? card.querySelector('.atypical-cross-sell-btn') : null;
+            if (btn) {
+              btn.dataset.variantId = select.value;
+            }
+          };
+        }
+
         if (typeof window.addCrossSellToCart !== 'function') {
-          window.addCrossSellToCart = function(btn, variantId) {
+          window.addCrossSellToCart = function(btn, fallbackVariantId) {
+            const card = btn.closest('.atypical-cross-sell-card');
+            const select = card ? card.querySelector('.atypical-cross-sell-variant-select') : null;
+            const variantId = select ? select.value : (btn.dataset.variantId || fallbackVariantId);
+
             if (!variantId || btn.disabled) return;
             btn.disabled = true;
             const defSpan = btn.querySelector('.btn-state-default');
             const succSpan = btn.querySelector('.btn-state-success');
             if (defSpan) defSpan.style.display = 'none';
-            if (succSpan) succSpan.style.display = 'inline-block';
-            btn.classList.add('added');
+            if (succSpan) {
+              succSpan.style.display = 'inline-block';
+              succSpan.textContent = 'ADDING...';
+            }
 
-            const formData = new FormData();
-            formData.append('id', variantId);
-            formData.append('quantity', '1');
+            const endpoint = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+              ? window.Shopify.routes.root + 'cart/add.js'
+              : '/cart/add.js';
 
-            fetch('/cart/add.js', {
+            fetch(endpoint, {
               method: 'POST',
-              body: formData
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                id: Number(variantId),
+                quantity: 1
+              })
             })
-            .then(res => res.json())
-            .then(data => {
+            .then(function(res) {
+              if (!res.ok) {
+                return res.json().then(function(json) { throw new Error(json.description || json.message || 'Error adding to cart'); });
+              }
+              return res.json();
+            })
+            .then(function(data) {
+              if (succSpan) succSpan.textContent = '✓ ADDED';
+              btn.classList.add('added');
+
+              // Dispatch events for drawer and cart update
               document.dispatchEvent(new CustomEvent('cart:update', { bubbles: true, detail: { resource: data } }));
+              document.dispatchEvent(new CustomEvent('cart:change', { bubbles: true, detail: { resource: data } }));
+
+              // Open cart drawer if present
               const cartDrawer = document.querySelector('cart-drawer-component');
               if (cartDrawer && typeof cartDrawer.showDialog === 'function') {
                 cartDrawer.showDialog();
               } else {
-                const drawerDialog = document.querySelector('cart-drawer-component dialog');
-                if (drawerDialog && typeof drawerDialog.showModal === 'function') {
-                  drawerDialog.showModal();
+                const dialog = document.querySelector('cart-drawer-component dialog, #cart-drawer dialog, .cart-drawer dialog');
+                if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+                  dialog.showModal();
                 }
               }
-              setTimeout(() => {
+
+              setTimeout(function() {
                 btn.disabled = false;
                 btn.classList.remove('added');
                 if (defSpan) defSpan.style.display = 'inline-block';
                 if (succSpan) succSpan.style.display = 'none';
-              }, 2200);
+              }, 2000);
             })
-            .catch(err => {
+            .catch(function(err) {
               console.error('Error adding cross-sell item to cart:', err);
-              btn.disabled = false;
-              btn.classList.remove('added');
-              if (defSpan) defSpan.style.display = 'inline-block';
-              if (succSpan) succSpan.style.display = 'none';
+              if (succSpan) succSpan.textContent = '! ERROR';
+              setTimeout(function() {
+                btn.disabled = false;
+                btn.classList.remove('added');
+                if (defSpan) defSpan.style.display = 'inline-block';
+                if (succSpan) succSpan.style.display = 'none';
+              }, 2000);
             });
           };
         }
