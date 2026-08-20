@@ -241,7 +241,7 @@
                     {%- assign form_id_1 = 'cross-sell-form-1-' | append: cross_sell_prod_1.id -%}
                     <product-form>
                       {%- form 'product', cross_sell_prod_1, id: form_id_1, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
-                        <input type="hidden" name="id" value="{{ cross_sell_prod_1.selected_or_first_available_variant.id }}" disabled>
+                        <input type="hidden" name="id" value="{{ cross_sell_prod_1.selected_or_first_available_variant.id }}">
                         <button type="submit" name="add" style="background: transparent; border: 1px solid var(--color-border); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-foreground); font-size: 14px; font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='var(--color-foreground)'; this.style.color='var(--color-background)';" onmouseout="this.style.background='transparent'; this.style.color='var(--color-foreground)';">+</button>
                       {%- endform -%}
                     </product-form>
@@ -264,7 +264,7 @@
                     {%- assign form_id_2 = 'cross-sell-form-2-' | append: cross_sell_prod_2.id -%}
                     <product-form>
                       {%- form 'product', cross_sell_prod_2, id: form_id_2, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
-                        <input type="hidden" name="id" value="{{ cross_sell_prod_2.selected_or_first_available_variant.id }}" disabled>
+                        <input type="hidden" name="id" value="{{ cross_sell_prod_2.selected_or_first_available_variant.id }}">
                         <button type="submit" name="add" style="background: transparent; border: 1px solid var(--color-border); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-foreground); font-size: 14px; font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='var(--color-foreground)'; this.style.color='var(--color-background)';" onmouseout="this.style.background='transparent'; this.style.color='var(--color-foreground)';">+</button>
                       {%- endform -%}
                     </product-form>
