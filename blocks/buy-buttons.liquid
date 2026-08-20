@@ -54,6 +54,7 @@
       endif
       assign cross_sell_heading = block_settings.cross_sell_heading | default: 'PAIRS WELL WITH'
 
+      # 1. Manual product overrides from settings
       assign cross_sell_prod_1 = block_settings.pairs_well_1
       if cross_sell_prod_1.title == blank and block_settings.pairs_well_1 != blank
         assign cross_sell_prod_1 = all_products[block_settings.pairs_well_1]
@@ -64,14 +65,67 @@
         assign cross_sell_prod_2 = all_products[block_settings.pairs_well_2]
       endif
 
-      # Auto-fallback to collection or store products if not manually selected
-      if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
-        for p in product.collections.first.products
-          if p.id != product.id and p.available
-            assign cross_sell_prod_1 = p
-            break
+      # 2. Custom collection from settings
+      assign target_collection = block_settings.cross_sell_collection
+
+      # 3. Dynamic category matching: Ringer Tees & Oversized Tshirts -> Sweatpants
+      assign prod_title_downcase = product.title | downcase
+      assign prod_type_downcase = product.type | downcase
+      assign is_tshirt = false
+      if prod_title_downcase contains 'ringer' or prod_title_downcase contains 'tee' or prod_title_downcase contains 't-shirt' or prod_title_downcase contains 'tshirt' or prod_title_downcase contains 'oversized' or prod_type_downcase contains 't-shirt' or prod_type_downcase contains 'tshirt' or prod_type_downcase contains 'tee'
+        assign is_tshirt = true
+      endif
+      for col in product.collections
+        assign col_h = col.handle | downcase
+        if col_h contains 'ringer' or col_h contains 'oversized' or col_h contains 'tshirt' or col_h contains 't-shirt' or col_h contains 'tees'
+          assign is_tshirt = true
+          break
+        endif
+      endfor
+
+      if target_collection == blank or target_collection.products_count == 0
+        if is_tshirt
+          if collections['sweatpants'] != blank and collections['sweatpants'].products.size > 0
+            assign target_collection = collections['sweatpants']
+          elsif collections['sweat-pants'] != blank and collections['sweat-pants'].products.size > 0
+            assign target_collection = collections['sweat-pants']
+          elsif collections['pants'] != blank and collections['pants'].products.size > 0
+            assign target_collection = collections['pants']
           endif
-        endfor
+        endif
+      endif
+
+      # 4. Fill Product 1 if still blank
+      if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
+        if target_collection != blank and target_collection.products.size > 0
+          for p in target_collection.products
+            if p.id != product.id and p.available
+              assign cross_sell_prod_1 = p
+              break
+            endif
+          endfor
+        endif
+
+        if is_tshirt and (cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank)
+          for p in collections.all.products
+            assign p_title = p.title | downcase
+            assign p_type = p.type | downcase
+            if p.id != product.id and p.available and (p_title contains 'sweatpant' or p_title contains 'pant' or p_type contains 'sweatpant' or p_type contains 'pant')
+              assign cross_sell_prod_1 = p
+              break
+            endif
+          endfor
+        endif
+
+        if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
+          for p in product.collections.first.products
+            if p.id != product.id and p.available
+              assign cross_sell_prod_1 = p
+              break
+            endif
+          endfor
+        endif
+
         if cross_sell_prod_1 == blank or cross_sell_prod_1.title == blank
           for p in collections.all.products
             if p.id != product.id and p.available
@@ -82,13 +136,37 @@
         endif
       endif
 
+      # 5. Fill Product 2 if still blank
       if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
-        for p in product.collections.first.products
-          if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
-            assign cross_sell_prod_2 = p
-            break
-          endif
-        endfor
+        if target_collection != blank and target_collection.products.size > 0
+          for p in target_collection.products
+            if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
+              assign cross_sell_prod_2 = p
+              break
+            endif
+          endfor
+        endif
+
+        if is_tshirt and (cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank)
+          for p in collections.all.products
+            assign p_title = p.title | downcase
+            assign p_type = p.type | downcase
+            if p.id != product.id and p.id != cross_sell_prod_1.id and p.available and (p_title contains 'sweatpant' or p_title contains 'pant' or p_type contains 'sweatpant' or p_type contains 'pant')
+              assign cross_sell_prod_2 = p
+              break
+            endif
+          endfor
+        endif
+
+        if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
+          for p in product.collections.first.products
+            if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
+              assign cross_sell_prod_2 = p
+              break
+            endif
+          endfor
+        endif
+
         if cross_sell_prod_2 == blank or cross_sell_prod_2.title == blank
           for p in collections.all.products
             if p.id != product.id and p.id != cross_sell_prod_1.id and p.available
@@ -1022,6 +1100,11 @@
       "id": "cross_sell_heading",
       "label": "Heading",
       "default": "PAIRS WELL WITH"
+    },
+    {
+      "type": "collection",
+      "id": "cross_sell_collection",
+      "label": "Cross-sell Collection (Optional)"
     },
     {
       "type": "product",
